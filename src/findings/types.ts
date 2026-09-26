@@ -6,7 +6,20 @@ export type Category =
   | 'Database'
   | 'CodeQuality'
   | 'Testing'
-  | 'Slop';
+  | 'Slop'
+  // UI Intelligence categories
+  | 'Typography'
+  | 'Color'
+  | 'Spatial'
+  | 'Composition'
+  | 'Components'
+  | 'Interaction'
+  | 'Responsive'
+  | 'Accessibility'
+  | 'Motion'
+  | 'Content'
+  | 'DesignSystem'
+  | 'UISlop';
 
 export type Severity = 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
 

@@ -50,6 +50,7 @@ When the user invokes slash commands or asks for quality control, route directly
 * `/simplify` (or `ei simplify`): Executes the 8-step anti-entropy simplification loop. (See [commands/simplify.md](../../commands/simplify.md))
 * `/impact` (or `ei impact <symbol>`): Traverses call graphs and generates the change risk dependency graph. (See [commands/impact.md](../../commands/impact.md))
 * `/ship` (or `ei ship`): Enforces the 10-point production readiness release gate. (See [commands/ship.md](../../commands/ship.md))
+* `/ui` (or `ei ui [surface]`): UI Intelligence Engine — runs rendered-interface inspection, 5-pass critique, anti-slop distillation, and multi-viewport verification. (See [docs/commands/ui.md](../../docs/commands/ui.md))
 
 ---
 
