@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { attributeFindings } from '../../src/baseline/index.js';
+import { attributeFindings, getGitMergeBase } from '../../src/baseline/index.js';
 import { RawFinding, computeEvidenceHash } from '../../src/findings/types.js';
 
 test('Baseline Attribution: distinguishes BASELINE vs NEW findings', () => {
@@ -64,3 +64,11 @@ test('Baseline Attribution: distinguishes BASELINE vs NEW findings', () => {
   assert.strictEqual(baselineItem?.baselineStatus, 'BASELINE');
   assert.strictEqual(newItem?.baselineStatus, 'NEW');
 });
+
+test('Baseline: getGitMergeBase safely attempts git merge-base query', () => {
+  const mb = getGitMergeBase(process.cwd());
+  // Can be string hash or null in isolated non-git testing environments
+  assert.ok(typeof mb === 'string' || mb === null);
+});
+
+

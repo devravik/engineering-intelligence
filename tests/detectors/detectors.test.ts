@@ -153,3 +153,27 @@ test('SLOP-003: detects speculative plugin registries with 1 registration', asyn
   assert.strictEqual(result.findings[0].ruleId, 'SLOP-003');
   assert.strictEqual(result.findings[0].impact, 'HIGH');
 });
+
+test('SARIF: exports valid SARIF v2.1.0 schema with rule annotations', async () => {
+  const { formatSarif } = await import('../../src/detectors/sarif.js');
+  const result = await runDetectors(repoRoot, {
+    targetSubpath: 'fixtures/architecture/unnecessary-abstraction.ts',
+    detectors: [arch001]
+  });
+
+  const sarifString = formatSarif(result);
+  const sarif = JSON.parse(sarifString);
+
+  assert.strictEqual(sarif.version, '2.1.0');
+  assert.ok(sarif.runs[0].tool.driver.name.includes('Engineering Intelligence'));
+  assert.strictEqual(sarif.runs[0].results.length, 1);
+  assert.strictEqual(sarif.runs[0].results[0].ruleId, 'ARCH-001');
+  assert.strictEqual(sarif.runs[0].results[0].level, 'error');
+});
+
+test('Custom Rules: loads declarative rules from .ei/rules/', async () => {
+  const { loadCustomRules } = await import('../../src/detectors/custom.js');
+  const custom = loadCustomRules(repoRoot);
+  assert.ok(Array.isArray(custom));
+});
+

@@ -2,6 +2,8 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { Finding, RawFinding, rawToFinding, computeEvidenceHash } from '../findings/types.js';
 
+import { execSync } from 'node:child_process';
+
 export interface BaselineEntry {
   ruleId: string;
   filePath: string;
@@ -14,35 +16,73 @@ export interface BaselineState {
   version: string;
   createdAt: string;
   updatedAt: string;
+  mergeBaseCommit?: string;
   entries: Record<string, BaselineEntry>; // keyed by evidenceHash
+}
+
+export function getGitMergeBase(repoRoot: string, targetRef: string = 'origin/main'): string | null {
+  try {
+    return execSync(`git merge-base ${targetRef} HEAD`, {
+      cwd: repoRoot,
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'ignore']
+    }).trim();
+  } catch {
+    try {
+      return execSync('git rev-parse HEAD~1', {
+        cwd: repoRoot,
+        encoding: 'utf-8',
+        stdio: ['pipe', 'pipe', 'ignore']
+      }).trim();
+    } catch {
+      return null;
+    }
+  }
 }
 
 export function getBaselinePath(repoRoot: string): string {
   return join(repoRoot, '.ei', 'state', 'baseline.json');
 }
 
-export function loadBaseline(repoRoot: string): BaselineState {
+export function loadBaseline(
+  repoRoot: string,
+  options: { dynamicMergeBase?: boolean; targetRef?: string } = {}
+): BaselineState {
   const filePath = getBaselinePath(repoRoot);
+  let mergeBaseCommit: string | undefined;
+
+  if (options.dynamicMergeBase) {
+    const mb = getGitMergeBase(repoRoot, options.targetRef);
+    if (mb) mergeBaseCommit = mb;
+  }
+
   if (!existsSync(filePath)) {
     return {
       version: '1.0.0',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      mergeBaseCommit,
       entries: {}
     };
   }
   try {
     const raw = readFileSync(filePath, 'utf-8');
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    if (mergeBaseCommit) {
+      parsed.mergeBaseCommit = mergeBaseCommit;
+    }
+    return parsed;
   } catch {
     return {
       version: '1.0.0',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
+      mergeBaseCommit,
       entries: {}
     };
   }
 }
+
 
 export function saveBaseline(repoRoot: string, baseline: BaselineState): void {
   const dir = join(repoRoot, '.ei', 'state');

@@ -39,7 +39,7 @@
     "code-review",
     "anti-slop"
   ],
-  "author": "K Ravi <dev.ravikgupt@gmail.com>",
+  "author": "Ravi Krishnan Gupta <dev.ravikgupt@gmail.com>",
   "license": "MIT",
   "engines": {
     "node": ">=18.0.0"

@@ -386,6 +386,6 @@ npm test
 Engineering Intelligence is open source under the [MIT License](LICENSE).
 
 * **Repository:** [github.com/devravik/engineering-intelligence](https://github.com/devravik/engineering-intelligence)
-* **Author:** K Ravi ([dev.ravikgupt@gmail.com](mailto:dev.ravikgupt@gmail.com))
+* **Author:** Ravi Krishnan Gupta ([dev.ravikgupt@gmail.com](mailto:dev.ravikgupt@gmail.com))
 * **Contributions:** See [CONTRIBUTING.md](CONTRIBUTING.md) to add detectors or failure fixtures.
 

@@ -39,18 +39,28 @@ async function main() {
 
     case 'detect': {
       const isJson = args.includes('--json');
+      const isSarif = args.includes('--sarif');
+      const dynamicBaseline = args.includes('--dynamic-baseline') || args.includes('--auto-reconcile');
       const changedOnly = args.includes('--changed') || args.includes('--staged');
       const targetSubpath = args.find(a => !a.startsWith('-') && a !== 'detect');
 
       const result = await runDetectors(repoRoot, {
         targetSubpath,
-        changedFilesOnly: changedOnly
+        changedFilesOnly: changedOnly,
+        dynamicMergeBase: dynamicBaseline
       });
+
+      if (isSarif) {
+        const { formatSarif } = await import('../detectors/sarif.js');
+        console.log(formatSarif(result));
+        process.exit(result.summary.blockers > 0 ? 1 : 0);
+      }
 
       if (isJson) {
         console.log(JSON.stringify(result, null, 2));
         process.exit(result.summary.blockers > 0 ? 1 : 0);
       }
+
 
       console.log('\n================================================================');
       console.log('                 ENGINEERING INTELLIGENCE DETECT');
@@ -276,7 +286,7 @@ Engineering Intelligence CLI (ei)
 
 Commands:
   ei init                          Initialize .ei/ context suite
-  ei detect [path] [--changed]     Run deterministic detector rules
+  ei detect [path] [--changed]     Run deterministic detector rules (--json, --sarif, --dynamic-baseline)
   ei review                        Run matrix-based engineering review
   ei simplify [path]               Run anti-entropy simplification analysis
   ei impact <symbol>               Generate dependency graph & change risk

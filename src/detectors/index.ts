@@ -153,6 +153,12 @@ export function collectFiles(
   return fileEntries;
 }
 
+import { loadCustomRules } from './custom.js';
+import { formatSarif } from './sarif.js';
+
+export * from './sarif.js';
+export * from './custom.js';
+
 export interface DetectionResult {
   findings: Finding[];
   unfilteredRawCount: number;
@@ -173,6 +179,7 @@ export async function runDetectors(
     targetSubpath?: string;
     changedFilesOnly?: boolean;
     detectors?: Detector[];
+    dynamicMergeBase?: boolean;
   } = {}
 ): Promise<DetectionResult> {
   const files = collectFiles(repoRoot, options.targetSubpath, options.changedFilesOnly);
@@ -183,8 +190,11 @@ export async function runDetectors(
     changedFilesOnly: options.changedFilesOnly
   };
 
-  const detectorsToRun = options.detectors || allDetectors;
+  const customDetectors = loadCustomRules(repoRoot);
+  const baseDetectors = options.detectors || allDetectors;
+  const detectorsToRun = [...baseDetectors, ...customDetectors];
   const rawFindings: RawFinding[] = [];
+
 
   for (const detector of detectorsToRun) {
     try {
@@ -211,8 +221,9 @@ export async function runDetectors(
   }
 
   // Attribute against baseline
-  const baseline = loadBaseline(repoRoot);
+  const baseline = loadBaseline(repoRoot, { dynamicMergeBase: options.dynamicMergeBase });
   const { activeFindings, summary } = attributeFindings(activeRawFindings, baseline);
+
 
   let blockers = 0;
   let fixCount = 0;
