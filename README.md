@@ -2,7 +2,7 @@
 
 Engineering quality control for AI coding agents. 1 canonical skill, 18 commands, live browser iteration, dynamic baseline attribution, and 81 deterministic detector rules (32 code + 49 UI).
 
-> **Quick start:** From your project root, run `npx engineering-intelligence install`, then run `ei init` (or `/ei init`) inside your AI coding tool. Full docs: [github.com/devravik/engineering-intelligence](https://github.com/devravik/engineering-intelligence).
+> **Quick start:** From your project root, run `npx @devravik/engineering-intelligence install`, then run `ei init` (or `/ei init`) inside your AI coding tool. Full docs: [github.com/devravik/engineering-intelligence](https://github.com/devravik/engineering-intelligence).
 
 ---
 
@@ -126,7 +126,7 @@ The skill needs no runtime of its own. It provisions native skills, instructions
 From the root of your project, run:
 
 ```bash
-npx engineering-intelligence install
+npx @devravik/engineering-intelligence install
 ```
 
 This auto-detects active harness directories and installed CLIs (such as Antigravity, Claude Code, Codex, Cursor, OpenCode, Cline), lets you confirm or customize providers, and installs project-local or global skills.
@@ -134,20 +134,20 @@ This auto-detects active harness directories and installed CLIs (such as Antigra
 - **Non-interactive / Scripted:**
   ```bash
   # Install for specific providers
-  npx engineering-intelligence install --providers=agy,claude,cursor --scope=project
+  npx @devravik/engineering-intelligence install --providers=agy,claude,cursor --scope=project
   
   # Install globally across user config directories (~/.gemini, ~/.claude, etc.)
-  npx engineering-intelligence install --scope=global
+  npx @devravik/engineering-intelligence install --scope=global
   ```
 
 - **Update Existing Installations:**
   ```bash
-  npx engineering-intelligence update
+  npx @devravik/engineering-intelligence update
   ```
 
 - **System Health Check (`doctor`):**
   ```bash
-  npx engineering-intelligence doctor
+  npx @devravik/engineering-intelligence doctor
   ```
 
 ### Option 2: Universal Agent Skills Ecosystem (`npx skills add`)
@@ -218,7 +218,7 @@ npm link
 
 ## Diagnostic Verification (`ei doctor`)
 
-Run `ei doctor` (or `npx engineering-intelligence doctor`) to verify your environment, harnesses, detectors, hooks, and project context:
+Run `ei doctor` (or `npx @devravik/engineering-intelligence doctor`) to verify your environment, harnesses, detectors, hooks, and project context:
 
 ```text
 ================================================================
