@@ -6,12 +6,24 @@ export const arch004: Detector = {
   name: 'architecture-inconsistency',
   category: 'Architecture',
   severity: 'HIGH',
+  ruleClass: 'CERTAIN',
   description: 'Detects architectural boundary violations such as direct database persistence calls in client UI components.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {
     const findings: RawFinding[] = [];
 
     for (const file of context.files) {
+      // Explicitly ignore server-side actions, server services, and backend handlers
+      if (
+        file.content.includes("'use server'") ||
+        file.content.includes('"use server"') ||
+        file.path.includes('/actions/') ||
+        file.path.includes('/server/') ||
+        file.path.includes('.server.')
+      ) {
+        continue;
+      }
+
       const isClientComponent =
         file.content.includes("'use client'") ||
         file.content.includes('"use client"') ||
@@ -26,7 +38,9 @@ export const arch004: Detector = {
         // Check for direct database imports or query calls in client UI components
         const directDbCall =
           /import\s+.*?\s+from\s+['"].*?(?:db|prisma|drizzle|typeorm|database)['"]/i.test(line) ||
-          /(?:await\s+)?(?:db|prisma|drizzle)\.[a-zA-Z0-9_]+\.(?:find[A-Za-z0-9_]*|create|update|delete|select|query)\b/.test(line);
+          /(?:await\s+)?(?:db|prisma|drizzle)\.[a-zA-Z0-9_]+\.(?:find[A-Za-z0-9_]*|create|update|delete|select|query)\b/.test(
+            line
+          );
 
         if (directDbCall) {
           findings.push({

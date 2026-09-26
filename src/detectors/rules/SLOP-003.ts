@@ -6,6 +6,7 @@ export const slop003: Detector = {
   name: 'speculative-infrastructure',
   category: 'Slop',
   severity: 'HIGH',
+  ruleClass: 'HEURISTIC',
   description: 'Detects extensible plugin or strategy registries that maintain exactly one registered implementation.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {
@@ -13,9 +14,16 @@ export const slop003: Detector = {
 
     for (const file of context.files) {
       if (!file.path.endsWith('.ts') && !file.path.endsWith('.js')) continue;
+      if (file.path.includes('/detectors/') || file.path.includes('/tests/') || file.path.includes('node_modules/')) {
+        continue;
+      }
 
       for (let i = 0; i < file.lines.length; i++) {
         const line = file.lines[i];
+        const trimmed = line.trim();
+        if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) {
+          continue;
+        }
 
         // Match: class PluginRegistry or class StrategyRegistry or class ProviderRegistry
         const registryMatch = line.match(/class\s+([A-Za-z0-9_]*(?:Registry|PluginManager|StrategySelector))\b/);

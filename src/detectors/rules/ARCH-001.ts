@@ -1,12 +1,32 @@
 import { Detector, DetectorContext } from '../types.js';
 import { RawFinding } from '../../findings/types.js';
 
+// Recognized architectural boundary interfaces that represent deliberate dependency inversion
+const ARCHITECTURAL_BOUNDARY_PATTERNS = [
+  /Repository$/i,
+  /Provider$/i,
+  /Adapter$/i,
+  /Client$/i,
+  /Storage$/i,
+  /Driver$/i,
+  /Port$/i,
+  /Gateway$/i,
+  /Plugin$/i,
+  /Handler$/i,
+  /Service$/i
+];
+
+function isArchitecturalBoundary(name: string): boolean {
+  return ARCHITECTURAL_BOUNDARY_PATTERNS.some(p => p.test(name));
+}
+
 export const arch001: Detector = {
   id: 'ARCH-001',
   name: 'unnecessary-abstraction',
   category: 'Architecture',
   severity: 'HIGH',
-  description: 'Detects single-implementation interfaces that add indirection without supporting variation.',
+  ruleClass: 'HEURISTIC',
+  description: 'Detects single-implementation interfaces that add indirection without supporting polymorphism or architectural inversion.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {
     const findings: RawFinding[] = [];
@@ -25,8 +45,24 @@ export const arch001: Detector = {
         const line = file.lines[i];
         // Match interface declarations: interface IUserService or interface UserService
         const match = line.match(/\binterface\s+([A-Za-z0-9_]+)/);
-        if (match && !match[1].startsWith('Props') && !match[1].endsWith('Props') && !match[1].endsWith('State')) {
+        if (
+          match &&
+          !match[1].startsWith('Props') &&
+          !match[1].endsWith('Props') &&
+          !match[1].endsWith('State') &&
+          !match[1].endsWith('Context')
+        ) {
           const ifaceName = match[1];
+
+          // Check if this interface is a mechanical 1:1 interface echo (e.g. IOrderService -> OrderService)
+          const isEchoInterface = ifaceName.startsWith('I') && ifaceName.length > 2 && /^[A-Z]/.test(ifaceName.slice(1));
+
+          // If the interface represents a deliberate architectural boundary (e.g. UserRepository),
+          // and is NOT a 1:1 echo interface, respect the restraint doctrine
+          if (isArchitecturalBoundary(ifaceName) && !isEchoInterface) {
+            continue;
+          }
+
           interfaceMap.set(ifaceName, {
             file: file.path,
             line: i + 1,
@@ -60,14 +96,16 @@ export const arch001: Detector = {
           findings.push({
             ruleId: 'ARCH-001',
             category: 'Architecture',
-            title: `Single-implementation interface '${ifaceName}'`,
-            message: `Interface '${ifaceName}' has exactly one concrete implementation. This introduces cognitive indirection without supporting polymorphism or variation.`,
+            title: `Single-implementation interface candidate '${ifaceName}'`,
+            message: `Interface '${ifaceName}' has exactly 1 concrete implementation. If this does not serve as an active dependency inversion boundary or mock point, inline it into the concrete class.`,
             filePath: info.file,
             line: info.line,
             evidence: `interface ${ifaceName}`,
-            confidence: 'HIGH',
+            confidence: 'MEDIUM',
             impact: 'HIGH',
-            suggestedFix: `Collapse '${ifaceName}' directly into the concrete class until multiple distinct implementations are required.`
+            disposition: 'REVIEW',
+            ruleClass: 'HEURISTIC',
+            suggestedFix: `Delete 'interface ${ifaceName}' and export the concrete class directly.`
           });
         }
       }

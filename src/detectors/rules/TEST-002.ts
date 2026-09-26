@@ -6,6 +6,7 @@ export const test002: Detector = {
   name: 'weak-assertion',
   category: 'Testing',
   severity: 'MEDIUM',
+  ruleClass: 'HEURISTIC',
   description: 'Detects weak or tautological test assertions that simulate test coverage without verifying behavior.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {

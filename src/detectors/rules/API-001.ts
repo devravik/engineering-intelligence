@@ -6,6 +6,7 @@ export const api001: Detector = {
   name: 'missing-authorization',
   category: 'Security',
   severity: 'CRITICAL',
+  ruleClass: 'PROBABLE',
   description: 'Detects mutating API endpoints or server actions that modify state without authorization checks.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {
@@ -13,6 +14,15 @@ export const api001: Detector = {
 
     for (const file of context.files) {
       const lowerPath = file.path.toLowerCase();
+      if (
+        lowerPath.includes('/detectors/') ||
+        lowerPath.includes('/tests/') ||
+        lowerPath.includes('/fixtures/') ||
+        lowerPath.includes('node_modules/')
+      ) {
+        continue;
+      }
+
       const isRouteFile =
         lowerPath.includes('route') ||
         lowerPath.includes('api') ||
@@ -23,6 +33,10 @@ export const api001: Detector = {
 
       for (let i = 0; i < file.lines.length; i++) {
         const line = file.lines[i];
+        const trimmed = line.trim();
+        if (trimmed.startsWith('//') || trimmed.startsWith('/*') || trimmed.startsWith('*')) {
+          continue;
+        }
         // Check for POST/PUT/DELETE/PATCH handlers
         const isMutatingHandler =
           line.match(/export\s+async\s+function\s+(POST|PUT|DELETE|PATCH)\b/) ||

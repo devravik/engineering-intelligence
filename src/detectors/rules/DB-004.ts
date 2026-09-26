@@ -6,6 +6,7 @@ export const db004: Detector = {
   name: 'destructive-migration',
   category: 'Database',
   severity: 'CRITICAL',
+  ruleClass: 'CERTAIN',
   description: 'Detects irreversible schema operations such as DROP TABLE or DROP COLUMN without explicit waivers.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {

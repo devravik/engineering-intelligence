@@ -6,6 +6,7 @@ export const code003: Detector = {
   name: 'excessive-indirection',
   category: 'CodeQuality',
   severity: 'MEDIUM',
+  ruleClass: 'HEURISTIC',
   description: 'Detects pass-through wrapper functions that merely delegate calls 1:1 without value-add.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {

@@ -6,6 +6,7 @@ export const db003: Detector = {
   name: 'unsafe-migration',
   category: 'Database',
   severity: 'CRITICAL',
+  ruleClass: 'CERTAIN',
   description: 'Detects table-locking migrations that add NOT NULL columns without DEFAULT values.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {

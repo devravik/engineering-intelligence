@@ -6,6 +6,7 @@ export const slop002: Detector = {
   name: 'repeated-boilerplate',
   category: 'Slop',
   severity: 'LOW',
+  ruleClass: 'HEURISTIC',
   description: 'Detects tautological echo comments that restate the code line verbatim without domain context.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {

@@ -6,6 +6,7 @@ export const code002: Detector = {
   name: 'dead-code',
   category: 'CodeQuality',
   severity: 'MEDIUM',
+  ruleClass: 'HEURISTIC',
   description: 'Detects exported functions or classes that are never referenced across the codebase.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {

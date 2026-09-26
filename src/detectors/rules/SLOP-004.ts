@@ -6,6 +6,7 @@ export const slop004: Detector = {
   name: 'unnecessary-configuration',
   category: 'Slop',
   severity: 'LOW',
+  ruleClass: 'CERTAIN',
   description: 'Detects phantom environment variables used in code that are missing from .env.example documentation.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {

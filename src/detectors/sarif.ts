@@ -1,4 +1,4 @@
-import { DetectionResult } from './index.js';
+import { DetectionResult } from './types.js';
 import { Severity } from '../findings/types.js';
 
 export function formatSarif(result: DetectionResult): string {

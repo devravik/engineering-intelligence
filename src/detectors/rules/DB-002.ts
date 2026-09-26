@@ -6,6 +6,7 @@ export const db002: Detector = {
   name: 'n-plus-one',
   category: 'Database',
   severity: 'HIGH',
+  ruleClass: 'PROBABLE',
   description: 'Detects database or ORM queries invoked synchronously inside iteration loops.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {

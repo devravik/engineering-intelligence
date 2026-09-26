@@ -6,6 +6,7 @@ export const slop001: Detector = {
   name: 'generic-abstraction',
   category: 'Slop',
   severity: 'HIGH',
+  ruleClass: 'HEURISTIC',
   description: 'Detects pass-through Factory classes that merely wrap single concrete class instantiations.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {

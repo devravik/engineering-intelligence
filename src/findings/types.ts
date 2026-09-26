@@ -26,6 +26,14 @@ export type BaselineStatus = Attribution;
 export type Disposition = 'BLOCK' | 'FIX' | 'REVIEW' | 'IGNORE' | 'SHIP';
 
 /**
+ * Three-tier detector rule classification:
+ * - CERTAIN: Deterministic evidence is conclusive (e.g. private keys, unindexed FKs, focused tests).
+ * - PROBABLE: Strong structural signal that benefits from context (e.g. multi-mutation boundary, shared mutable state).
+ * - HEURISTIC: Candidate anti-pattern requiring semantic judgment (e.g. unnecessary abstraction, pass-through wrapper).
+ */
+export type RuleClass = 'CERTAIN' | 'PROBABLE' | 'HEURISTIC';
+
+/**
  * Structured, physical evidence contract for a finding.
  * Contains the exact file, line boundaries, code snippet, and cryptographic hash.
  */
@@ -64,6 +72,7 @@ export interface EIFinding {
   disposition: Disposition;
 
   suggestedFix?: string;
+  ruleClass?: RuleClass;
   firstSeen: string;
   lastVerified: string;
 
@@ -89,6 +98,8 @@ export interface RawFinding {
   evidence: string;
   confidence: Confidence;
   impact: Severity;
+  disposition?: Disposition;
+  ruleClass?: RuleClass;
   suggestedFix?: string;
 }
 

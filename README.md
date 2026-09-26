@@ -192,7 +192,7 @@ Behavior lives in deterministic test contracts, not endlessly growing prompt ins
 | Command | Deterministic Action | Lifecycle Phase |
 | :--- | :--- | :--- |
 | **`ei init`** | Initializes `.ei/` context suite (`PROJECT.md`, `ARCHITECTURE.md`, `CONVENTIONS.md`, `state/`) | Setup / Onboarding |
-| **`ei detect`** | Runs 24 high-confidence deterministic detectors with SHA-256 evidence hashes and SARIF export | Continuous QC |
+| **`ei detect`** | Runs 32 high-confidence deterministic detectors with SHA-256 evidence hashes and SARIF export | Continuous QC |
 | **`ei review`** | Diagnostic evaluation: generates matrix, attribution, recommendations, and highlights UNKNOWN areas | Pre-Commit / PR |
 | **`ei simplify`** | Runs 8-step anti-entropy loop; verifies LOC and abstraction reduction | Refactoring |
 | **`ei impact <target>`** | Traverses dependency graph across APIs, jobs, tests, and database | Planning / Pre-Merge |
@@ -437,7 +437,7 @@ ei sync-providers --install
 
 ## Regression Test Suite
 
-All 24 detectors, attribution logic, waiver policies, and provider adapters are verified by automated tests against real code fixtures:
+All 32 detectors, attribution logic, waiver policies, and provider adapters are verified by automated tests against real code fixtures:
 
 ```bash
 npm test

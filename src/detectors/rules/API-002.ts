@@ -6,6 +6,7 @@ export const api002: Detector = {
   name: 'inconsistent-error-contract',
   category: 'CodeQuality',
   severity: 'HIGH',
+  ruleClass: 'HEURISTIC',
   description: 'Detects swallowed exceptions in empty or unhandled catch blocks that destroy stack traces.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {

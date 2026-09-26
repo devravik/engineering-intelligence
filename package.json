@@ -11,10 +11,10 @@
     "build": "tsc",
     "ei": "tsx src/cli/index.ts",
     "detect": "tsx src/cli/index.ts detect",
-    "test": "tsx --test tests/**/*.test.ts",
-    "test:detectors": "tsx --test tests/detectors/**/*.test.ts",
-    "test:reviewer": "tsx --test tests/reviewer/**/*.test.ts",
-    "test:baseline": "tsx --test tests/baseline/**/*.test.ts"
+    "test": "tsx --test tests/*/*.test.ts",
+    "test:detectors": "tsx --test tests/detectors/*.test.ts",
+    "test:reviewer": "tsx --test tests/reviewer/*.test.ts",
+    "test:baseline": "tsx --test tests/baseline/*.test.ts"
   },
   "files": [
     "bin",

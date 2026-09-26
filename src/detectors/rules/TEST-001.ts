@@ -6,6 +6,7 @@ export const test001: Detector = {
   name: 'changed-behavior-without-coverage',
   category: 'Testing',
   severity: 'MEDIUM',
+  ruleClass: 'PROBABLE',
   description: 'Detects source files modified in changes without corresponding test updates.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {

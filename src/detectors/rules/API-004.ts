@@ -6,6 +6,7 @@ export const api004: Detector = {
   name: 'duplicated-validation',
   category: 'CodeQuality',
   severity: 'MEDIUM',
+  ruleClass: 'HEURISTIC',
   description: 'Detects redundant validation checks performed immediately after schema parser validation.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {

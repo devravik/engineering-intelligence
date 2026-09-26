@@ -7,6 +7,7 @@ export const arch003: Detector = {
   name: 'circular-dependency',
   category: 'Architecture',
   severity: 'HIGH',
+  ruleClass: 'CERTAIN',
   description: 'Detects direct circular dependencies between modules.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {

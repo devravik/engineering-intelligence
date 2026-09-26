@@ -96,6 +96,7 @@ export class FindingNormalizer {
       impact,
       disposition,
       suggestedFix: typeof rawRecord.suggestedFix === 'string' ? rawRecord.suggestedFix : undefined,
+      ruleClass: (rawRecord.ruleClass as EIFinding['ruleClass']) || 'PROBABLE',
       firstSeen: String(rawRecord.firstSeen || now),
       lastVerified: now,
 

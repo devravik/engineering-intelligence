@@ -1,4 +1,4 @@
-import { Category, RawFinding, Severity } from '../findings/types.js';
+import { Category, RawFinding, Severity, EIFinding, RuleClass } from '../findings/types.js';
 
 export interface FileEntry {
   path: string;       // relative path from repo root
@@ -30,6 +30,21 @@ export interface Detector {
   name: string;
   category: Category;
   severity: Severity;
+  ruleClass?: RuleClass;
   description: string;
   run(context: DetectorContext): Promise<RawFinding[]>;
+}
+
+export interface DetectionResult {
+  findings: EIFinding[];
+  unfilteredRawCount: number;
+  waivedCount: number;
+  summary: {
+    baselineCount: number;
+    newCount: number;
+    resolvedCount: number;
+    blockers: number;
+    fixCount: number;
+    advisoryCount: number;
+  };
 }

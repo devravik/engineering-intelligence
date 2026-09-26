@@ -109,33 +109,41 @@ When the user invokes commands or asks for quality control, route directly to th
 * `/ship` (or `ei ship`): **Terminal Release Gate.** Enforces production readiness preconditions and the strict `UNKNOWN != PASS` invariant. Evaluates to `BLOCK`, `FIX`, or `SHIP`. (See [commands/ship.md](commands/ship.md))
 * `/simplify` (or `ei simplify`): **Anti-Entropy Loop.** Analyzes and executes candidate structural simplifications (deletes single-use interfaces, pass-through factories, and dead wrappers). (See [commands/simplify.md](commands/simplify.md))
 * `/impact` (or `ei impact <symbol>`): **Blast Radius Traversal.** Computes full dependency call graph across APIs, database models, and test suites. (See [commands/impact.md](commands/impact.md))
-* `ei detect`: **Deterministic Evidence Engine.** Runs 24 high-speed inspection rules and returns physical evidence hashes and SARIF v2.1.0 exports.
+* `ei detect`: **Deterministic Evidence Engine.** Runs 32 high-speed inspection rules and returns physical evidence hashes and SARIF v2.1.0 exports.
 * `ei baseline`: **Debt Snapshot & Reconcile.** Manages `.ei/state/baseline.json` via dynamic Git merge-base attribution.
 * `ei ignores`: **Waiver Management.** Records tracked waivers with mandatory justifications.
 
 ---
 
 ## Active Deterministic Rules Catalog
+- **SEC-001** (Security): Detects hardcoded secrets, private keys, and high-entropy authentication tokens committed in code.
+- **SEC-002** (Security): Detects raw SQL queries constructed using direct string interpolation or concatenation without parameterized bindings.
 - **ARCH-001** (Architecture): Detects single-implementation interfaces that add indirection without supporting variation.
 - **ARCH-002** (Architecture): Detects multiple services or modules with overlapping responsibilities and duplicated public methods.
 - **ARCH-003** (Architecture): Detects direct circular dependencies between modules.
 - **ARCH-004** (Architecture): Detects architectural boundary violations such as direct database persistence calls in client UI components.
+- **ARCH-005** (Architecture): Detects module-level shared mutable state in server routes or controllers mutated across concurrent requests.
 - **CODE-001** (CodeQuality): Detects identical multi-line code blocks duplicated across multiple files.
 - **CODE-002** (CodeQuality): Detects exported functions or classes that are never referenced across the codebase.
 - **CODE-003** (CodeQuality): Detects pass-through wrapper functions that merely delegate calls 1:1 without value-add.
 - **CODE-004** (CodeQuality): Detects production dependencies declared in package.json that are never imported anywhere in the project.
 - **CODE-005** (CodeQuality): Detects redundant optional chaining or null assertions immediately inside non-null guard blocks.
+- **CODE-006** (CodeQuality): Detects compiler suppression directives (@ts-ignore, @ts-nocheck) and gratuitous "as any" type casts in application code.
+- **CODE-007** (CodeQuality): Detects floating, unawaited asynchronous promises in mutating handlers that risk unhandled rejections or premature runtime termination.
 - **API-001** (Security): Detects mutating API endpoints or server actions that modify state without authorization checks.
 - **API-002** (CodeQuality): Detects swallowed exceptions in empty or unhandled catch blocks that destroy stack traces.
 - **API-003** (Security): Detects breaking modifications to public API route signatures or contract definitions.
 - **API-004** (CodeQuality): Detects redundant validation checks performed immediately after schema parser validation.
+- **API-005** (Architecture): Detects outgoing HTTP requests (fetch, axios, http.request) executed without an explicit timeout or AbortSignal.
 - **DB-001** (Database): Detects foreign key relation columns declared in SQL or schemas without accompanying indexes.
 - **DB-002** (Database): Detects database or ORM queries invoked synchronously inside iteration loops.
 - **DB-003** (Database): Detects table-locking migrations that add NOT NULL columns without DEFAULT values.
 - **DB-004** (Database): Detects irreversible schema operations such as DROP TABLE or DROP COLUMN without explicit waivers.
+- **DB-005** (Database): Detects multiple database write mutations executed in sequence without an atomic transaction boundary.
 - **TEST-001** (Testing): Detects source files modified in changes without corresponding test updates.
 - **TEST-002** (Testing): Detects weak or tautological test assertions that simulate test coverage without verifying behavior.
 - **TEST-003** (Testing): Detects services with critical error throws whose test files test only happy paths.
+- **TEST-004** (Testing): Detects committed skipped, ignored, or exclusively focused test cases (.skip, .only, xit, fit) that disable regression suites.
 - **SLOP-001** (Slop): Detects pass-through Factory classes that merely wrap single concrete class instantiations.
 - **SLOP-002** (Slop): Detects tautological echo comments that restate the code line verbatim without domain context.
 - **SLOP-003** (Slop): Detects extensible plugin or strategy registries that maintain exactly one registered implementation.

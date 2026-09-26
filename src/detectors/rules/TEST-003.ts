@@ -6,6 +6,7 @@ export const test003: Detector = {
   name: 'missing-failure-path-coverage',
   category: 'Testing',
   severity: 'MEDIUM',
+  ruleClass: 'PROBABLE',
   description: 'Detects services with critical error throws whose test files test only happy paths.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {
@@ -21,10 +22,11 @@ export const test003: Detector = {
 
       // Find corresponding test file
       const baseName = file.path.replace(/\.[^/.]+$/, '');
+      const fileNameWithoutExt = baseName.split('/').pop()!;
       const testFile = context.files.find(
         f =>
           (f.path.includes('test') || f.path.includes('spec')) &&
-          f.path.includes(baseName.replace(/^src\//, ''))
+          (f.path.includes(baseName.replace(/^src\//, '')) || f.path.includes(fileNameWithoutExt))
       );
 
       if (testFile) {
@@ -32,7 +34,9 @@ export const test003: Detector = {
           testFile.content.includes('toThrow') ||
           testFile.content.includes('rejects') ||
           testFile.content.includes('catch') ||
-          testFile.content.includes('throws');
+          testFile.content.includes('throws') ||
+          testFile.content.includes('assert.throws') ||
+          testFile.content.includes('assert.rejects');
 
         if (!testsErrorPath) {
           findings.push({

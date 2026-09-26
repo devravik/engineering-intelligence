@@ -6,6 +6,7 @@ export const code004: Detector = {
   name: 'unnecessary-dependency',
   category: 'CodeQuality',
   severity: 'MEDIUM',
+  ruleClass: 'CERTAIN',
   description: 'Detects production dependencies declared in package.json that are never imported anywhere in the project.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {

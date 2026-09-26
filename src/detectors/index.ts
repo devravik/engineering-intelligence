@@ -1,17 +1,22 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { execSync } from 'node:child_process';
-import { Detector, DetectorContext, FileEntry } from './types.js';
+import { Detector, DetectorContext, FileEntry, DetectionResult } from './types.js';
 import { RawFinding, Finding, EIFinding } from '../findings/types.js';
 import { FindingNormalizer } from '../findings/normalizer.js';
 import { loadIgnores, checkIgnored } from '../ignores/index.js';
 import { loadBaseline, attributeFindings } from '../baseline/index.js';
+
+// Security detectors
+import { sec001 } from './rules/SEC-001.js';
+import { sec002 } from './rules/SEC-002.js';
 
 // Architecture detectors
 import { arch001 } from './rules/ARCH-001.js';
 import { arch002 } from './rules/ARCH-002.js';
 import { arch003 } from './rules/ARCH-003.js';
 import { arch004 } from './rules/ARCH-004.js';
+import { arch005 } from './rules/ARCH-005.js';
 
 // Code Quality detectors
 import { code001 } from './rules/CODE-001.js';
@@ -19,23 +24,28 @@ import { code002 } from './rules/CODE-002.js';
 import { code003 } from './rules/CODE-003.js';
 import { code004 } from './rules/CODE-004.js';
 import { code005 } from './rules/CODE-005.js';
+import { code006 } from './rules/CODE-006.js';
+import { code007 } from './rules/CODE-007.js';
 
 // API & Contract detectors
 import { api001 } from './rules/API-001.js';
 import { api002 } from './rules/API-002.js';
 import { api003 } from './rules/API-003.js';
 import { api004 } from './rules/API-004.js';
+import { api005 } from './rules/API-005.js';
 
 // Database & Persistence detectors
 import { db001 } from './rules/DB-001.js';
 import { db002 } from './rules/DB-002.js';
 import { db003 } from './rules/DB-003.js';
 import { db004 } from './rules/DB-004.js';
+import { db005 } from './rules/DB-005.js';
 
 // Testing detectors
 import { test001 } from './rules/TEST-001.js';
 import { test002 } from './rules/TEST-002.js';
 import { test003 } from './rules/TEST-003.js';
+import { test004 } from './rules/TEST-004.js';
 
 // Slop detectors
 import { slop001 } from './rules/SLOP-001.js';
@@ -44,26 +54,34 @@ import { slop003 } from './rules/SLOP-003.js';
 import { slop004 } from './rules/SLOP-004.js';
 
 export const allDetectors: Detector[] = [
+  sec001,
+  sec002,
   arch001,
   arch002,
   arch003,
   arch004,
+  arch005,
   code001,
   code002,
   code003,
   code004,
   code005,
+  code006,
+  code007,
   api001,
   api002,
   api003,
   api004,
+  api005,
   db001,
   db002,
   db003,
   db004,
+  db005,
   test001,
   test002,
   test003,
+  test004,
   slop001,
   slop002,
   slop003,
@@ -160,19 +178,7 @@ import { formatSarif } from './sarif.js';
 export * from './sarif.js';
 export * from './custom.js';
 
-export interface DetectionResult {
-  findings: Finding[];
-  unfilteredRawCount: number;
-  waivedCount: number;
-  summary: {
-    baselineCount: number;
-    newCount: number;
-    resolvedCount: number;
-    blockers: number;
-    fixCount: number;
-    advisoryCount: number;
-  };
-}
+export type { DetectionResult } from './types.js';
 
 export async function runDetectors(
   repoRoot: string,
@@ -200,6 +206,11 @@ export async function runDetectors(
   for (const detector of detectorsToRun) {
     try {
       const results = await detector.run(context);
+      for (const res of results) {
+        if (!res.ruleClass && detector.ruleClass) {
+          res.ruleClass = detector.ruleClass;
+        }
+      }
       rawFindings.push(...results);
     } catch (err) {
       console.error(`Detector ${detector.id} encountered error:`, err);

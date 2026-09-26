@@ -6,6 +6,7 @@ export const code001: Detector = {
   name: 'duplicated-logic',
   category: 'CodeQuality',
   severity: 'MEDIUM',
+  ruleClass: 'CERTAIN',
   description: 'Detects identical multi-line code blocks duplicated across multiple files.',
 
   async run(context: DetectorContext): Promise<RawFinding[]> {
