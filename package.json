@@ -1,0 +1,52 @@
+{
+  "name": "engineering-intelligence",
+  "version": "0.1.0",
+  "description": "Engineering quality control for AI coding agents: detect, attribute, prioritize, repair, verify.",
+  "type": "module",
+  "bin": {
+    "ei": "./bin/ei.js"
+  },
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "ei": "tsx src/cli/index.ts",
+    "detect": "tsx src/cli/index.ts detect",
+    "test": "tsx --test tests/**/*.test.ts",
+    "test:detectors": "tsx --test tests/detectors/**/*.test.ts",
+    "test:reviewer": "tsx --test tests/reviewer/**/*.test.ts",
+    "test:baseline": "tsx --test tests/baseline/**/*.test.ts"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "skills",
+    "providers",
+    "templates",
+    "commands",
+    "README.md",
+    "SKILL.md"
+  ],
+  "keywords": [
+    "ai-agent",
+    "coding-agent",
+    "antigravity",
+    "agy",
+    "claude-code",
+    "codex",
+    "cursor",
+    "opencode",
+    "code-quality",
+    "code-review",
+    "anti-slop"
+  ],
+  "author": "K Ravi <dev.ravikgupt@gmail.com>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

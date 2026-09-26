@@ -1,0 +1,134 @@
+{
+  "name": "engineering-intelligence",
+  "version": "0.1.0",
+  "description": "Engineering quality control plugin for OpenCode",
+  "commands": {
+    "review": "ei review",
+    "simplify": "ei simplify",
+    "impact": "ei impact",
+    "ship": "ei ship",
+    "detect": "ei detect"
+  },
+  "rules": [
+    {
+      "id": "ARCH-001",
+      "name": "unnecessary-abstraction",
+      "severity": "HIGH"
+    },
+    {
+      "id": "ARCH-002",
+      "name": "duplicated-responsibility",
+      "severity": "HIGH"
+    },
+    {
+      "id": "ARCH-003",
+      "name": "circular-dependency",
+      "severity": "HIGH"
+    },
+    {
+      "id": "ARCH-004",
+      "name": "architecture-inconsistency",
+      "severity": "HIGH"
+    },
+    {
+      "id": "CODE-001",
+      "name": "duplicated-logic",
+      "severity": "MEDIUM"
+    },
+    {
+      "id": "CODE-002",
+      "name": "dead-code",
+      "severity": "MEDIUM"
+    },
+    {
+      "id": "CODE-003",
+      "name": "excessive-indirection",
+      "severity": "MEDIUM"
+    },
+    {
+      "id": "CODE-004",
+      "name": "unnecessary-dependency",
+      "severity": "MEDIUM"
+    },
+    {
+      "id": "CODE-005",
+      "name": "overly-defensive-code",
+      "severity": "LOW"
+    },
+    {
+      "id": "API-001",
+      "name": "missing-authorization",
+      "severity": "CRITICAL"
+    },
+    {
+      "id": "API-002",
+      "name": "inconsistent-error-contract",
+      "severity": "HIGH"
+    },
+    {
+      "id": "API-003",
+      "name": "breaking-contract-change",
+      "severity": "CRITICAL"
+    },
+    {
+      "id": "API-004",
+      "name": "duplicated-validation",
+      "severity": "MEDIUM"
+    },
+    {
+      "id": "DB-001",
+      "name": "missing-index",
+      "severity": "HIGH"
+    },
+    {
+      "id": "DB-002",
+      "name": "n-plus-one",
+      "severity": "HIGH"
+    },
+    {
+      "id": "DB-003",
+      "name": "unsafe-migration",
+      "severity": "CRITICAL"
+    },
+    {
+      "id": "DB-004",
+      "name": "destructive-migration",
+      "severity": "CRITICAL"
+    },
+    {
+      "id": "TEST-001",
+      "name": "changed-behavior-without-coverage",
+      "severity": "MEDIUM"
+    },
+    {
+      "id": "TEST-002",
+      "name": "weak-assertion",
+      "severity": "MEDIUM"
+    },
+    {
+      "id": "TEST-003",
+      "name": "missing-failure-path-coverage",
+      "severity": "MEDIUM"
+    },
+    {
+      "id": "SLOP-001",
+      "name": "generic-abstraction",
+      "severity": "HIGH"
+    },
+    {
+      "id": "SLOP-002",
+      "name": "repeated-boilerplate",
+      "severity": "LOW"
+    },
+    {
+      "id": "SLOP-003",
+      "name": "speculative-infrastructure",
+      "severity": "HIGH"
+    },
+    {
+      "id": "SLOP-004",
+      "name": "unnecessary-configuration",
+      "severity": "LOW"
+    }
+  ]
+}

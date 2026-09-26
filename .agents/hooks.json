@@ -1,0 +1,34 @@
+{
+  "ei-quality-guard": {
+    "enabled": true,
+    "PostToolUse": [
+      {
+        "matcher": "replace_file_content",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "ei detect --changed",
+            "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "write_to_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "ei detect --changed",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "type": "command",
+        "command": "ei review",
+        "timeout": 20
+      }
+    ]
+  }
+}
