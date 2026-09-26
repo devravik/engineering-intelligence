@@ -73,9 +73,26 @@ Deterministic Evidence + Project Context + LLM Reasoning + Baseline Attribution 
 
 ---
 
-## The Six-Stage Quality Pipeline
+## The Seven-Stage Quality Pipeline
 
-The core value proposition of Engineering Intelligence is the deterministic evidence ➔ attribution ➔ reasoning ➔ verification pipeline:
+The core mental model and intellectual property of Engineering Intelligence is the deterministic evidence ➔ attribution ➔ reasoning ➔ verification pipeline:
+
+```text
+DETECT
+  ↓  (Deterministic evidence engine finds concrete code evidence)
+NORMALIZE
+  ↓  (Finding Normalizer standardizes into canonical EIFinding contract)
+ATTRIBUTE
+  ↓  (Dynamic Git merge-base reconciles BASELINE vs NEW vs MODIFIED)
+UNDERSTAND
+  ↓  (Project Memory grounds domain rules: PROJECT.md, ARCHITECTURE.md)
+REASON
+  ↓  (Staff Engineer mental models: failure modes, anti-slop, restraint)
+DECIDE
+  ↓  (Review Matrix: recommendations, confidence, unknowns, disposition)
+VERIFY
+  ↓  (Release Gate via ei ship: test suites, zero blockers, UNKNOWN != PASS)
+```
 
 ```text
 Detectors
@@ -86,9 +103,13 @@ Baseline Attribution
     ↓
 Project Context
     ↓
-LLM Reasoning
+LLM / Semantic Reasoning
     ↓
 Review Matrix
+    ↓
+Verification (ei ship)
+    ↓
+REVIEW / FIX / BLOCK / SHIP
 ```
 
 ### 1. The Canonical Internal Finding Contract (`EIFinding`)
@@ -121,9 +142,9 @@ type EIFinding = {
 ```
 
 ### 2. Conservative Completeness (Evidence vs. Proof)
-Engineering Intelligence runs deterministic checks with zero token latency or LLM hallucination risk. However, EI maintains a strict philosophy around detection scope:
-* A detector finding means: **"EI found concrete evidence matching this rule."**
-* It does **not** mean: **"EI proved that no other instance exists."**
+Deterministic detectors execute locally via fast AST and text matching without LLM token overhead. Crucially, EI maintains a conservative contract around detection:
+* **A finding means EI found concrete evidence matching a rule.**
+* It does **not** mean **EI proved that no other instance exists.**
 
 Detection is grounded in physical code evidence; it does not claim formal mathematical absence in ambiguous or unanalyzed paths.
 
