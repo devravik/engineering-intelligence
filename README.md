@@ -1,119 +1,298 @@
 # Engineering Intelligence
 
-<p align="center">
-  <strong>Engineering quality control for AI coding agents.</strong><br>
-  <em>Detect. Attribute. Prioritize. Repair. Verify.</em>
-</p>
+Engineering quality control for AI coding agents. 1 canonical skill, 18 commands, live browser iteration, dynamic baseline attribution, and 81 deterministic detector rules (32 code + 49 UI).
 
-<p align="center">
-  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
-  <a href="tests/"><img src="https://img.shields.io/badge/Regression_Tests-Passing-brightgreen.svg" alt="Tests"></a>
-  <a href="src/detectors/"><img src="https://img.shields.io/badge/Detectors-12_Deterministic_Rules-purple.svg" alt="Detectors"></a>
-  <a href="providers/"><img src="https://img.shields.io/badge/Providers-Claude_|_Cursor_|_Codex_|_OpenCode-orange.svg" alt="Providers"></a>
-</p>
+> **Quick start:** From your project root, run `npx engineering-intelligence install`, then run `ei init` (or `/ei init`) inside your AI coding tool. Full docs: [github.com/devravik/engineering-intelligence](https://github.com/devravik/engineering-intelligence).
 
 ---
+
+## Why Engineering Intelligence?
 
 Modern AI coding agents generate an immense volume of code very quickly. That introduces a critical failure mode:
 
 ### AI can produce technically valid software that is still bad software. It looks correct.
 
 Large Language Models will cheerfully generate:
-* 4-layer class indirection for a single database query (**ARCH-001**).
-* Circular dependency cycles between domain services (**ARCH-003**).
-* Pass-through Abstract Factories for singletons (**SLOP-001**).
-* Tautological echo comments that verbatim restate the code (**SLOP-002**).
-* Destructive migrations that lock production tables (**DB-003**).
-* Mutating API endpoints with missing authorization guards (**API-001**).
-* N+1 query loops inside serialization maps (**DB-002**).
+- 4-layer class indirection for a single database query (**ARCH-001**).
+- Circular dependency cycles between domain services (**ARCH-003**).
+- Pass-through Abstract Factories for singletons (**SLOP-001**).
+- Tautological echo comments that verbatim restate the code (**SLOP-002**).
+- Destructive migrations that lock production tables (**DB-003**).
+- Mutating API endpoints with missing authorization guards (**API-001**).
+- N+1 query loops inside serialization maps (**DB-002**).
+- AI purple/blue gradients and card-in-card visual slop (**UI-COLOR-001**, **UI-SLOP-003**).
 
-Prompts alone cannot prevent this. **Maturity requires converting observed failures into deterministic contracts, baseline attribution, regression tests, and machine-derived dispositions.**
+Prompts alone cannot prevent this. Engineering Intelligence adds:
+- **One setup flow.** `ei init` records durable project truth in `.ei/` (`PROJECT.md`, `ARCHITECTURE.md`, `CONVENTIONS.md`, `DESIGN.md`, `constraints.md`), so agents understand architecture without hallucinating boundaries.
+- **18 commands.** A shared engineering vocabulary with your AI: `detect`, `review`, `simplify`, `impact`, `ship`, `doctor`, `ui critique`, `ui audit`, `ui distill`, and more.
+- **81 deterministic detector rules** (32 code + 49 UI). Runs locally with zero LLM API costs and zero token latency.
+- **Dynamic Git merge-base attribution.** Distinguishes legacy debt from regressions in new changes (`BASELINE` vs `NEW`).
+- **Staff-level release verification.** Mechanical dispositions (`BLOCK`, `FIX`, `REVIEW`, `SHIP`) enforcing `UNKNOWN != PASS`.
+
+---
+
+## What's Included
+
+### The Skill: engineering-intelligence
+
+The skill installs as a native command across supported AI coding tools:
+
+```bash
+/ei <command> <target>
+# or in terminal:
+ei <command> <target>
+```
+
+Start every new project with:
+
+```bash
+ei init
+# or `/ei init` in your agent chat
+```
+
+`init` inspects the project, discovers the active tech stack, and initializes the durable `.ei/` context suite:
 
 ```text
-Deterministic Evidence + Project Context + LLM Reasoning + Baseline Attribution + Regression Tests
-= Engineering Intelligence
+.ei/
+├── PROJECT.md          # Mission, core domains, and detected stack baseline
+├── ARCHITECTURE.md     # Layering rules, dependency boundaries, invariants
+├── CONVENTIONS.md      # Coding style, error handling, validation idioms
+├── DESIGN.md           # Visual design system tokens, typography, surfaces
+├── DECISIONS.md        # Architecture Decision Records (ADRs)
+├── constraints.md      # Invariants, performance budgets, forbidden deps
+├── ignores.json        # Scoped waivers with mandatory justification
+└── state/
+    ├── baseline.json   # Known legacy baseline snapshot
+    └── sessions/       # Ephemeral session inspection runs
+```
+
+### Commands
+
+All commands are accessible directly via the CLI or through your agent's native `/ei` slash interface:
+
+| Command | What it does |
+| :--- | :--- |
+| `ei init` | One-time setup: inspect stack, record project memory, write `.ei/` context suite |
+| `ei detect` | Run deterministic rules on changed files (`--changed`) or entire workspace |
+| `ei review` | Evaluate findings matrix, reconcile baseline attribution, derive disposition |
+| `ei simplify` | 8-step anti-entropy simplification loop: eliminate dead code, collapse indirection |
+| `ei impact <symbol>` | Blast radius & dependency graph traversal: trace callers, risks, dependents |
+| `ei ship` | Pre-merge release gate: verifies 10 production checks, enforces `UNKNOWN != PASS` |
+| `ei baseline` | Snapshot or display known legacy technical debt without penalizing new PRs |
+| `ei ignores` | Manage scoped waivers and rule suppressions with mandatory rationale |
+| `ei doctor` | Audit installed harnesses, capabilities, detectors, hooks, and marketplace parity |
+| `ei install` | Auto-detect AI agent harnesses and provision native skills, hooks, and rules |
+| `ei update` | Re-synchronize installed provider configurations and skills from canonical core |
+| `ei ui detect` | Deterministic frontend rules: typography, color, spacing, composition, slop |
+| `ei ui audit` | Technical UI audit: accessibility (WCAG AA), responsive matrix, tokens |
+| `ei ui critique` | Two-pass critique: mechanical compliance + visual/UX heuristic reasoning |
+| `ei ui distill` | Anti-slop distillation: remove unnecessary wrappers, cards, and decoration |
+| `ei ui document` | Reverse-engineer existing styles into a clean, canonical `DESIGN.md` |
+| `ei mcp` | Start stdio Model Context Protocol (MCP) & Agent Client Protocol (ACP) server |
+| `ei providers` | Inspect all 16 supported coding agents, environments, and priority tiers |
+| `ei sync-providers` | Synchronize provider artifacts across P0-P3 tiers from canonical core |
+
+#### Usage Examples
+
+```bash
+ei detect --changed           # Check changed files in active Git branch
+ei review                     # Review changes with machine-derived disposition
+ei simplify src/services/     # Strip pass-through wrappers and singletons
+ei impact UserModel           # Check blast radius before refactoring
+ei ship                       # Run release gate verification before merging
+ei ui critique src/components # Run 5-pass UI & accessibility critique
+```
+
+### Anti-Patterns & Slop Doctrine
+
+Engineering Intelligence enforces explicit constraints against common AI-generated antipatterns:
+
+- **No speculative indirection:** Don't create single-implementation interfaces or factories (`ARCH-001`, `SLOP-001`).
+- **No echo comments:** Don't write comments that simply restate the line of code (`SLOP-002`).
+- **No unhandled exceptions:** Don't swallow errors in empty catch blocks or destroy stack traces (`API-002`).
+- **No N+1 queries:** Don't execute database queries inside map/filter/loops (`DB-002`).
+- **No unindexed foreign keys:** Don't define relational keys without index backing (`DB-001`).
+- **No unconstrained HTTP:** Don't make external network calls without timeouts or AbortSignals (`API-005`).
+- **No generic AI aesthetics:** Don't use purple-to-blue gradients, card-in-card nesting, or low-contrast text (`UI-COLOR-001`, `UI-SLOP-003`).
+
+---
+
+## Installation
+
+The skill needs no runtime of its own. It provisions native skills, instructions, rules, and hooks into your agent harness, while the deterministic engine runs via npm or local CLI.
+
+### Option 1: CLI installer (Recommended)
+
+From the root of your project, run:
+
+```bash
+npx engineering-intelligence install
+```
+
+This auto-detects active harness directories and installed CLIs (such as Antigravity, Claude Code, Codex, Cursor, OpenCode, Cline), lets you confirm or customize providers, and installs project-local or global skills.
+
+- **Non-interactive / Scripted:**
+  ```bash
+  # Install for specific providers
+  npx engineering-intelligence install --providers=agy,claude,cursor --scope=project
+  
+  # Install globally across user config directories (~/.gemini, ~/.claude, etc.)
+  npx engineering-intelligence install --scope=global
+  ```
+
+- **Update Existing Installations:**
+  ```bash
+  npx engineering-intelligence update
+  ```
+
+- **System Health Check (`doctor`):**
+  ```bash
+  npx engineering-intelligence doctor
+  ```
+
+### Option 2: Universal Agent Skills Ecosystem (`npx skills add`)
+
+For skill-native agents adopting the open Agent Skills standard, install directly from the canonical skill definition without any custom CLI:
+
+```bash
+# Universal skill installation
+npx skills add https://github.com/devravik/engineering-intelligence --skill engineering-intelligence
+
+# Or via GitHub shorthand:
+npx skills add devravik/engineering-intelligence --skill engineering-intelligence
+```
+
+The canonical skill resides in [`skills/engineering-intelligence/SKILL.md`](skills/engineering-intelligence/SKILL.md) with self-contained detector references, commands, anti-slop doctrine, and verification scripts.
+
+### Option 3: Claude Code Marketplace Plugin
+
+Install the native Claude Code plugin with bundled skills and slash commands:
+
+```text
+/plugin marketplace add devravik/engineering-intelligence
+```
+
+> Claude Code only. Provides native `/detect`, `/review`, `/simplify`, `/impact`, `/ship`, and `/ui` commands with automated manifest version-lock parity.
+
+### Option 4: Google Antigravity (AGY)
+
+Antigravity is supported as a first-class P0 environment with dual-directory compatibility:
+
+- **Project-Local:**
+  Provisions `.agents/skills/engineering-intelligence/SKILL.md` and `.agent/skills/engineering-intelligence/SKILL.md`.
+- **Global:**
+  Provisions `~/.gemini/config/skills/engineering-intelligence/SKILL.md`.
+- **Hooks:**
+  Configures edit-time verification and pre-stop check hooks in `.agents/hooks.json`.
+- **Zero Runtime Dependency:**
+  AGY loads the skill's instructions directly; the EI engine is only invoked when deterministic checks or browser testing are requested.
+
+### Option 5: Manual Copy & Direct Git
+
+**Cursor:**
+```bash
+cp -r providers/cursor/.cursor your-project/
+# Or copy rule: cp providers/cursor/.cursor/rules/engineering-intelligence.mdc your-project/.cursor/rules/
+```
+
+**OpenAI Codex & Copilot:**
+```bash
+cp providers/codex/codex.json your-project/
+cp providers/copilot/.github/copilot-instructions.md your-project/.github/
+```
+
+**OpenCode:**
+```bash
+cp -r providers/opencode/.opencode your-project/
+```
+
+**Direct Git & Offline Environments:**
+```bash
+git clone https://github.com/devravik/engineering-intelligence.git
+cd engineering-intelligence
+npm install
+npm link
 ```
 
 ---
 
-## Frozen Core Architecture
+## Diagnostic Verification (`ei doctor`)
+
+Run `ei doctor` (or `npx engineering-intelligence doctor`) to verify your environment, harnesses, detectors, hooks, and project context:
 
 ```text
-                     ENGINEERING INTELLIGENCE
-                              │
-                 ┌────────────┴────────────┐
-                 │                         │
-          Evidence Engine            Context Engine
-                 │                         │
-          ┌──────┼──────┐            Project Memory
-          │      │      │
-      Detectors Baseline Impact
-          │      │      │
-          └──────┼──────┘
-                 ▼
-          FINDING NORMALIZER
-                 │
-                 ▼
-          LLM / Semantic Reasoning
-                 │
-                 ▼
-           Review Matrix
-              │     │
-              │     └───────── ei review  (Diagnostic: findings, evidence, attribution, confidence, recommendations, UNKNOWN)
-              │
-              └─────────────── ei ship    (Release Gate: BLOCK / FIX / SHIP, enforcing UNKNOWN != PASS)
-                              │
-                    BLOCK / FIX / SHIP
+================================================================
+                 ENGINEERING INTELLIGENCE DOCTOR
+================================================================
 
-                 Standard EI Protocol
-                        │
-        ┌───────┬───────┼───────┬───────┐
-       AGY   Claude   Codex   OpenCode   ...
+──── Installed & Detected Harnesses ────
+  ✓ Antigravity CLI (AGY)    [P0] (.agents/skills/engineering-intelligence/SKILL.md)
+  ✓ Claude Code              [P0] (.claude/skills/engineering-intelligence/SKILL.md)
+  ✓ OpenAI Codex CLI         [P0] (.github/copilot-instructions.md)
+  ✓ Cursor                   [P1] (.cursor/rules/engineering-intelligence.mdc)
+  ✓ GitHub Copilot           [P2] (.github/copilot-instructions.md)
+
+──── Capabilities & Engines ────
+  ✓ 32 Engineering Detectors (Architecture, DB, Security, API, Slop)
+  ✓ 49 UI Detectors (Typography, Color, Spatial, Slop, A11y, Responsive)
+  ℹ Browser Engine: Static DOM & CSS analysis active (install Playwright for live captures)
+  ✓ 5-Pass Visual Reasoning Engine (Questions, Distill, Layout, Typeset, Harden, Polish)
+  ✓ Agent Client Protocol (ACP) & stdio MCP Server
+
+──── Lifecycle Hooks ────
+  ✓ Antigravity (AGY)   : Active edit-time and stop verification hooks in .agents/hooks.json
+  ℹ Claude Code         : Supported via native skill discovery in .claude/skills/ and plugin marketplace
+  ! Codex / Copilot     : Directives in .github/copilot-instructions.md require user approval per prompt
+
+──── Project Context Suite ────
+  ✓ .ei/PROJECT.md        Found
+  ✓ .ei/ARCHITECTURE.md   Found
+  ✓ .ei/DESIGN.md         Found
+  ✓ Baseline Snapshot     Snapshot active (4 legacy issues tracked)
+
+──── Claude Marketplace & Version Parity ────
+  Package Version:        0.1.0
+  ✓ .claude-plugin/plugin.json      (0.1.0)
+  ✓ .claude-plugin/marketplace.json (0.1.0)
+  ✓ Version Alignment:           100% aligned
+================================================================
 ```
 
 ---
 
-## The Seven-Stage Quality Pipeline
+## The Quality Pipeline & Frozen Core
 
 The core mental model and intellectual property of Engineering Intelligence is the deterministic evidence ➔ attribution ➔ reasoning ➔ verification pipeline:
 
 ```text
-DETECT
-  ↓  (Deterministic evidence engine finds concrete code evidence)
-NORMALIZE
-  ↓  (Finding Normalizer standardizes into canonical EIFinding contract)
-ATTRIBUTE
-  ↓  (Dynamic Git merge-base reconciles BASELINE vs NEW vs MODIFIED)
-UNDERSTAND
-  ↓  (Project Memory grounds domain rules: PROJECT.md, ARCHITECTURE.md)
-REASON
-  ↓  (Staff Engineer mental models: failure modes, anti-slop, restraint)
-DECIDE
-  ↓  (Review Matrix: recommendations, confidence, unknowns, disposition)
-VERIFY
-  ↓  (Release Gate via ei ship: test suites, zero blockers, UNKNOWN != PASS)
+DETECTION ENGINE                     CONTEXT ENGINE
+(32 code + 49 UI rules)               (Project Memory: .ei/)
+       │                                       │
+       └───────────────────┬───────────────────┘
+                           ▼
+                  FINDING NORMALIZER
+                  (EIFinding Contract)
+                           │
+                           ▼
+                  BASELINE ATTRIBUTION
+              (Git Merge-Base Reconciliation)
+                           │
+                           ▼
+                  STAFF-LEVEL REASONING
+               (Anti-Slop & Restraint Doctrine)
+                           │
+                           ▼
+                     REVIEW MATRIX
+                 (Disposition Derivation)
+                           │
+                           ▼
+                     RELEASE GATE
+                 (ei ship: UNKNOWN != PASS)
 ```
 
-```text
-Detectors
-    ↓
-Finding Normalizer
-    ↓
-Baseline Attribution
-    ↓
-Project Context
-    ↓
-LLM / Semantic Reasoning
-    ↓
-Review Matrix
-    ↓
-Verification (ei ship)
-    ↓
-REVIEW / FIX / BLOCK / SHIP
-```
+### The Canonical Internal Finding Contract (`EIFinding`)
 
-### 1. The Canonical Internal Finding Contract (`EIFinding`)
-The **Finding Normalizer** acts as the stable interface boundary between raw deterministic analysis and reasoning layers. Every finding conforms to:
+The **Finding Normalizer** acts as the stable interface boundary between raw deterministic analysis and reasoning layers:
 
 ```ts
 type EIFinding = {
@@ -129,333 +308,37 @@ type EIFinding = {
   }
 
   attribution:
-    | "BASELINE"
-    | "NEW"
-    | "MODIFIED"
-    | "RESOLVED"
-    | "UNKNOWN"
+    | "BASELINE"    // Pre-existing legacy debt
+    | "NEW"         // Introduced in current changeset
+    | "MODIFIED"    // Changed in current changeset
+    | "RESOLVED"    // Fixed by current changeset
+    | "UNKNOWN"     // Unverifiable without human review
 
   confidence: Confidence
   impact: Impact
-  disposition: Disposition
+  disposition: Disposition // BLOCK | FIX | REVIEW | IGNORE | SHIP
 }
 ```
 
-### 2. Conservative Completeness (Evidence vs. Proof)
-Deterministic detectors execute locally via fast AST and text matching without LLM token overhead. Crucially, EI maintains a conservative contract around detection:
+### Conservative Completeness (Evidence vs. Proof)
+Deterministic detectors execute locally via fast AST and text matching without LLM token overhead:
 * **A finding means EI found concrete evidence matching a rule.**
 * It does **not** mean **EI proved that no other instance exists.**
 
 Detection is grounded in physical code evidence; it does not claim formal mathematical absence in ambiguous or unanalyzed paths.
 
-### 3. Dynamic Git Merge-Base Attribution
+### Dynamic Git Merge-Base Attribution
 EI distinguishes pre-existing legacy technical debt from newly introduced debt using dynamic Git merge-base reconciliation (`git merge-base origin/main HEAD`) against `.ei/state/baseline.json`:
 ```text
 BASELINE: 84 existing | THIS CHANGE: 2 new | 1 modified | 1 resolved
 ```
 Legacy debt is tracked, not blamed on current pull requests.
 
-### 4. Explicitly Separated `review` and `ship` Semantics
-EI prevents the diagnostic review process from becoming an unnecessarily rigid deployment gate:
-
-```text
-ei review
-    → findings
-    → physical evidence (file, line, snippet, hash)
-    → attribution (BASELINE vs NEW vs MODIFIED)
-    → confidence scores
-    → actionable recommendations
-    → UNKNOWN areas requiring engineering judgment
-
-ei ship
-    → release verification preconditions
-    → strict enforcement: UNKNOWN != PASS
-    → terminal verdict: BLOCK / FIX / SHIP
-```
-
-* `ei review` provides deep diagnostic insight, recommendations, and unverified areas without halting agent workflows prematurely.
-* `ei ship` serves as the hard production gate where any unverified path or blocker yields `BLOCK`.
-
-### 5. Mandatory Waiver Rationale
-Exceptions cannot be silently disabled. The waiver system requires an explicit business or technical justification recorded in `.ei/ignores.json`:
-```bash
-ei ignores add-rule ARCH-001 --reason "Required for external plugin architecture"
-```
-
-### 6. Regression Test Corpus (`fixtures/`)
-Behavior lives in deterministic test contracts, not endlessly growing prompt instructions. Every observed agent failure is codified into a test fixture in `fixtures/` verified by `npm test`.
-
----
-
-## Command Suite
-
-| Command | Deterministic Action | Lifecycle Phase |
-| :--- | :--- | :--- |
-| **`ei init`** | Initializes `.ei/` context suite (`PROJECT.md`, `ARCHITECTURE.md`, `CONVENTIONS.md`, `state/`) | Setup / Onboarding |
-| **`ei detect`** | Runs 32 high-confidence deterministic detectors with SHA-256 evidence hashes and SARIF export | Continuous QC |
-| **`ei review`** | Diagnostic evaluation: generates matrix, attribution, recommendations, and highlights UNKNOWN areas | Pre-Commit / PR |
-| **`ei simplify`** | Runs 8-step anti-entropy loop; verifies LOC and abstraction reduction | Refactoring |
-| **`ei impact <target>`** | Traverses dependency graph across APIs, jobs, tests, and database | Planning / Pre-Merge |
-| **`ei ship`** | Enforces the production readiness verification gate (`BLOCK / FIX / SHIP`, `UNKNOWN != PASS`) | Release Gate |
-| **`ei baseline`** | Snapshots and reconciles technical debt in `baseline.json` using merge-base resolution | Debt Management |
-| **`ei ignores`** | Manages rule and file waivers with mandatory rationale | Compliance |
-| **`ei sync-providers`** | Generates provider configs across 16 tools via 5 archetype drivers | Multi-Provider Sync |
-
----
-
-## Example: The Engineering Review Matrix
-
-When you run `ei review` or ask your agent to `/review`:
-
-```text
-================================================================
-                     ENGINEERING REVIEW MATRIX                  
-================================================================
-
-Discipline      Evidence    Impact        Confidence    Disposition
-----------------------------------------------------------------
-Architecture    ✓           HIGH          HIGH          FIX
-Security        ✓           CRITICAL      HIGH          BLOCK
-Database        ✓           NONE          NONE          SHIP
-CodeQuality     ✓           LOW           HIGH          IGNORE
-Testing         ~           MEDIUM        MEDIUM        REVIEW
-Slop            ✓           HIGH          HIGH          FIX
-----------------------------------------------------------------
-ATTRIBUTION:
-  Baseline: 42 existing | New: 2 | Resolved: 1
-
-CURRENT STATE:
-  BLOCKERS:  1
-  FIX:       2
-  ADVISORY:  3
-  UNKNOWN:   0
-
-================================================================
-FINAL DISPOSITION: BLOCK
-================================================================
-
-DETAILED FINDINGS:
-- [CRITICAL] API-001 (Security): Mutating route handler missing authorization guard
-  File: src/api/users/delete.ts:4
-  Baseline Status: NEW | Disposition: BLOCK
-  Evidence: export async function DELETE(req, db)
-  Fix: Add authentication middleware or verify user permissions before executing mutations.
-
-- [HIGH] ARCH-001 (Architecture): Single-implementation interface 'IOrderService'
-  File: src/services/OrderService.ts:1
-  Baseline Status: NEW | Disposition: FIX
-  Evidence: interface IOrderService
-  Fix: Collapse 'IOrderService' directly into the concrete class until variation is required.
-```
-
----
-
-## Distribution & Installation
-
-Engineering Intelligence supports **three independent distribution channels** from a single canonical GitHub repository. Whether you use Antigravity, Claude Code, Cursor, Codex, OpenCode, or universal agent tooling, you can install EI with zero friction:
-
-```text
-                    ENGINEERING INTELLIGENCE
-                              │
-                 ┌────────────┴────────────┐
-                 │                         │
-            Distribution              Discovery
-                 │                         │
-         npx engineering-          Skills ecosystem
-         intelligence install      Claude Marketplace
-                 │                  Agent directories
-                 │                  GitHub
-                 │
-          Provider Adapters
-                 │
-      ┌──────────┼───────────┐
-      ▼          ▼           ▼
-     AGY      Claude       Codex
-```
-
-### 1. Primary Installer (`npx engineering-intelligence install`)
-The fastest and most powerful way to set up EI for whatever AI tools you use. It detects supported agent harnesses on your machine and provisions native skills, configuration, rules, and hooks:
-
-```bash
-# Auto-detect all active harnesses and install into current project
-npx engineering-intelligence install
-
-# Or install globally across user agent configuration directories (~/.gemini, ~/.claude, etc.)
-npx engineering-intelligence install --scope global
-
-# Or target specific agent harnesses
-npx engineering-intelligence install --providers agy,claude,cursor
-```
-
-To update all installed agent skills and provider bindings at any time:
-```bash
-npx engineering-intelligence update
-```
-
-To verify your agent harnesses, capabilities, detectors, hooks, and project context:
-```bash
-npx engineering-intelligence doctor
-```
-
-Output:
-```text
-================================================================
-             ENGINEERING INTELLIGENCE DOCTOR
-================================================================
-
-Target Repository: /path/to/project
-
-[AI Agent Harnesses]
-  ✓ Antigravity (AGY)          [P0 Core]     Installed (.agents/skills/engineering-intelligence/SKILL.md)
-  ✓ Claude Code                [P0 Core]     Installed (.claude/skills/engineering-intelligence/SKILL.md)
-  ✓ Codex                      [P0 Core]     Installed (codex.json)
-  ✓ OpenCode                   [P1 Harness]  Available in repo
-  ✓ Cursor                     [P0 Core]     Installed (.cursor/rules/engineering-intelligence.mdc)
-  ✓ Cline                      [P1 Harness]  Available in repo
-
-[Intelligence Capabilities]
-  ✓ Engineering Detectors:     32 deterministic rules loaded
-  ✓ UI Detectors:              49 rules across 5 categories loaded
-  ✓ Browser Engine:            Playwright available
-  ✓ MCP Server:                stdio agent client protocol active
-  ✓ Visual Reasoning:          Multimodal layout & spatial reasoning active
-
-[Agent Hooks & Enforcement]
-  ✓ Antigravity (AGY)          ACTIVE (.agents/hooks.json)
-  ✓ Claude Code                ACTIVE (.claude-plugin/plugin.json)
-  ✓ Codex                      CONFIGURED (approval requested for mutating actions)
-
-[Project Context]
-  ✓ Mission & Stack:           .ei/PROJECT.md
-  ✓ Architecture:              .ei/ARCHITECTURE.md
-  ✓ UI Design System:          .ei/DESIGN.md
-  ✓ Quality Baseline:          4 legacy findings tracked
-
-[Marketplace & Distribution Alignment]
-  ✓ Package Version:           0.1.0
-  ✓ Claude Plugin Manifest:    0.1.0 (.claude-plugin/plugin.json)
-  ✓ Claude Marketplace:        0.1.0 (.claude-plugin/marketplace.json)
-  ✓ Version Parity:            ALIGNED
-================================================================
-```
-
----
-
-### 2. Universal Agent Skills Ecosystem (`npx skills add`)
-For skill-native agents following the open Agent Skills standard, install directly from the canonical skill definition without any custom CLI:
-
-```bash
-# Universal skill installation
-npx skills add https://github.com/devravik/engineering-intelligence --skill engineering-intelligence
-
-# Or via short repo shorthand
-npx skills add devravik/engineering-intelligence --skill engineering-intelligence
-```
-
-The canonical skill resides in [`skills/engineering-intelligence/SKILL.md`](skills/engineering-intelligence/SKILL.md) with self-contained detector references, commands, anti-slop doctrine, and verification scripts.
-
----
-
-### 3. Claude Code Native Marketplace
-Install native Claude Code skill and slash commands directly from Claude Code's plugin interface:
-
-```text
-/plugin marketplace add devravik/engineering-intelligence
-```
-
-Provides `/detect`, `/review`, `/simplify`, `/impact`, `/ship`, and `/ui` as native Claude slash commands with guaranteed manifest version-lock parity.
-
----
-
-### 4. Direct Git & Source Installation
-For offline, air-gapped, or development workflows:
-
-```bash
-git clone https://github.com/devravik/engineering-intelligence.git
-cd engineering-intelligence
-npm install
-npm link
-```
-
----
-
-## Daily Workflow
-
-### 1. Initialize Project Memory
-```bash
-ei init
-```
-
-This creates the persistent project context and state directories:
-```text
-.ei/
-├── PROJECT.md          # Mission and detected stack baseline
-├── ARCHITECTURE.md     # Layering rules and boundary invariants
-├── CONVENTIONS.md      # Coding style, error handling, validation idioms
-├── DECISIONS.md        # Architecture Decision Records (ADRs)
-├── constraints.md      # Invariants, performance budgets, forbidden deps
-├── ignores.json        # Scoped waivers with mandatory rationale
-└── state/
-    ├── baseline.json   # Known legacy baseline snapshot
-    └── sessions/       # Ephemeral session inspection runs
-```
-
-### 2. Run Deterministic Quality Control
-```bash
-# Check changed files in active Git branch
-ei detect --changed
-
-# Review changes against baseline with machine-derived disposition
-ei review
-
-# Run anti-entropy simplification
-ei simplify src/
-
-# Trace blast radius of a symbol
-ei impact UserModel
-
-# Pre-release gate check
-ei ship
-```
-
----
-
-## Detector Catalog
-
-| Rule ID | Category | Name | Detection Logic |
-| :--- | :--- | :--- | :--- |
-| **`ARCH-001`** | Architecture | `unnecessary-abstraction` | Single-implementation interfaces adding indirection without variation. |
-| **`ARCH-002`** | Architecture | `duplicated-responsibility` | Multiple classes/modules sharing identical method responsibilities. |
-| **`ARCH-003`** | Architecture | `circular-dependency` | Direct cyclical imports between modules (`A -> B` and `B -> A`). |
-| **`ARCH-004`** | Architecture | `architecture-inconsistency` | Direct database persistence calls in client UI components. |
-| **`CODE-001`** | CodeQuality | `duplicated-logic` | Identical multi-line code blocks duplicated across multiple files. |
-| **`CODE-002`** | CodeQuality | `dead-code` | Unreferenced exported functions or classes in non-entrypoint files. |
-| **`CODE-003`** | CodeQuality | `excessive-indirection` | Pass-through wrapper functions that merely delegate calls 1:1 without value-add. |
-| **`CODE-004`** | CodeQuality | `unnecessary-dependency` | Production dependencies declared in package.json never imported anywhere. |
-| **`CODE-005`** | CodeQuality | `overly-defensive-code` | Redundant optional chaining (`a?.b`) immediately inside `if (a)` guards. |
-| **`API-001`** | Security | `missing-authorization` | Mutating route handlers (`POST/PUT/DELETE`) modifying DB without auth. |
-| **`API-002`** | CodeQuality | `inconsistent-error-contract`| Swallowed exceptions in empty catch blocks destroying stack traces. |
-| **`API-003`** | Security | `breaking-contract-change` | Breaking modifications to route signatures or public endpoint contracts. |
-| **`API-004`** | CodeQuality | `duplicated-validation` | Redundant manual validation checks immediately after schema validation. |
-| **`DB-001`** | Database | `missing-index` | Foreign key relation columns declared in schemas/SQL without indexes. |
-| **`DB-002`** | Database | `n-plus-one` | Database queries executed synchronously inside iteration loops. |
-| **`DB-003`** | Database | `unsafe-migration` | `ALTER TABLE ADD COLUMN NOT NULL` without `DEFAULT` on populated tables. |
-| **`DB-004`** | Database | `destructive-migration` | Irreversible `DROP TABLE` or `DROP COLUMN` operations without waivers. |
-| **`TEST-001`** | Testing | `changed-behavior-without-coverage` | Source files modified in a changeset with 0 test file updates. |
-| **`TEST-002`** | Testing | `weak-assertion` | Weak or tautological assertions (`expect(true).toBe(true)`) generating fake coverage. |
-| **`TEST-003`** | Testing | `missing-failure-path-coverage` | Services with explicit error throws whose tests cover only happy paths. |
-| **`SLOP-001`** | Slop | `generic-abstraction` | Pass-through Factory classes wrapping single hardcoded concrete classes. |
-| **`SLOP-002`** | Slop | `repeated-boilerplate` | Tautological echo comments that literally rephrase the following line. |
-| **`SLOP-003`** | Slop | `speculative-infrastructure`| Extensible plugin/strategy registries with only 1 registered implementation. |
-| **`SLOP-004`** | Slop | `unnecessary-configuration` | Phantom environment variables used in code missing from `.env.example`. |
-
 ---
 
 ## Universal Provider Protocol: 16 Coding Agents Across 3 Surfaces
 
-Rather than building 16 divergent, hard-coded adapters, Engineering Intelligence is structured around a **Standard Engineering Intelligence Protocol**. 
-
-The core produces a unified quality control engine, which translates through 5 standard archetype drivers:
+Rather than building 16 divergent, hard-coded adapters, Engineering Intelligence is structured around a **Standard Engineering Intelligence Protocol**. The core produces a unified quality control engine, which translates through 5 standard archetype drivers:
 
 ```text
                      Engineering Intelligence Core
@@ -475,13 +358,7 @@ The core produces a unified quality control engine, which translates through 5 s
                                                        Junie
 ```
 
-> **Provider support:** Engineering Intelligence must support Antigravity CLI (AGY) as a first-class coding-agent environment alongside Claude Code, Codex, Cursor, OpenCode, Gemini CLI, and GitHub Copilot. Provider adapters must translate the same Engineering Intelligence capabilities into each agent's native skill, command, context, and hook mechanisms without duplicating the underlying engineering logic.
-
----
-
 ### The 2026 Agent Ecosystem Matrix
-
-Engineering Intelligence classifies and supports the complete modern agent landscape across 4 priority tiers:
 
 | Priority | Coding Agent | Environment | Native Channels | Key Integration Points |
 | :--- | :--- | :--- | :--- | :--- |
@@ -502,11 +379,9 @@ Engineering Intelligence classifies and supports the complete modern agent lands
 | **P3** | **OpenHands** | Autonomous / Cloud | `acp_mcp`, `cli` | Autonomous agent integration via `.openhands/mcp.json`. |
 | **P3** | **Devin (Cloud)** | Autonomous / Cloud | `acp_mcp`, `ide_rules` | Cloud sandbox execution instructions via `.devin/instructions.md`. |
 
----
+### Model Context Protocol (MCP) & Agent Client Protocol (ACP)
 
-### Universal Interoperability via MCP & ACP (`ei mcp`)
-
-Engineering Intelligence includes a built-in JSON-RPC stdio **Model Context Protocol (MCP)** and **Agent Client Protocol (ACP)** server. Any agent supporting MCP (such as Zed, Kilo Code, Devin, OpenHands, or Claude Desktop) can connect directly:
+Engineering Intelligence includes a built-in stdio JSON-RPC server (`ei mcp`):
 
 ```json
 {
@@ -519,74 +394,55 @@ Engineering Intelligence includes a built-in JSON-RPC stdio **Model Context Prot
 }
 ```
 
-Exposed MCP Tools:
-- **`ei_detect`**: Runs deterministic detectors on changed files or entire workspace.
-- **`ei_review`**: Evaluates finding matrix and derives mechanical terminal disposition (`BLOCK`, `FIX`, `REVIEW`, `IGNORE`, `SHIP`).
-- **`ei_simplify`**: Executes the 8-step anti-entropy simplification loop.
-- **`ei_impact`**: Traverses call graphs and calculates blast radius for any symbol or file.
-- **`ei_ship`**: Verifies the 10-point production release gate.
+Exposed Tools: `ei_detect`, `ei_review`, `ei_simplify`, `ei_impact`, `ei_ship`, and `ei_ui`.
 
 ---
 
-### Synchronizing Providers
+## Deterministic Detector Catalog
 
-Generate or update configuration artifacts across all 16 providers with a single command:
-
-```bash
-# View all supported coding agents and priority tiers
-ei providers
-
-# Synchronize all 16 providers from canonical core
-ei sync-providers
-
-# Synchronize only P0 and P1 tier providers
-ei sync-providers --tier P0,P1
-
-# Install directly into current workspace (.agents/, .claude/, .github/, .cursor/, .zed/, etc.)
-ei sync-providers --install
-```
-
+| Rule ID | Category | Name | Detection Logic |
+| :--- | :--- | :--- | :--- |
+| **`ARCH-001`** | Architecture | `unnecessary-abstraction` | Single-implementation interfaces adding indirection without variation. |
+| **`ARCH-002`** | Architecture | `duplicated-responsibility` | Multiple classes/modules sharing identical method responsibilities. |
+| **`ARCH-003`** | Architecture | `circular-dependency` | Direct cyclical imports between modules (`A -> B` and `B -> A`). |
+| **`ARCH-004`** | Architecture | `architecture-inconsistency` | Direct database persistence calls in client UI components. |
+| **`ARCH-005`** | Architecture | `hidden-shared-mutable-state` | Module-level mutable singletons/caches accessed across boundary functions. |
+| **`CODE-001`** | CodeQuality | `duplicated-logic` | Identical multi-line code blocks duplicated across multiple files. |
+| **`CODE-002`** | CodeQuality | `dead-code` | Unreferenced exported functions or classes in non-entrypoint files. |
+| **`CODE-003`** | CodeQuality | `excessive-indirection` | Pass-through wrapper functions that merely delegate calls 1:1 without value-add. |
+| **`CODE-004`** | CodeQuality | `unnecessary-dependency` | Production dependencies declared in package.json never imported anywhere. |
+| **`CODE-005`** | CodeQuality | `overly-defensive-code` | Redundant optional chaining (`a?.b`) immediately inside `if (a)` guards. |
+| **`CODE-006`** | CodeQuality | `compiler-suppression-directive`| Unconstrained TypeScript suppression (`@ts-ignore`, `@ts-nocheck`, `any` casts). |
+| **`CODE-007`** | CodeQuality | `floating-unawaited-promise` | Floating, unawaited asynchronous promises on known async APIs in mutating handlers. |
+| **`SEC-001`** | Security | `hardcoded-secret` | Embedded API keys, private tokens, or credentials in source code. |
+| **`SEC-002`** | Security | `sql-injection` | Unescaped string interpolation or concatenation in raw SQL queries. |
+| **`API-001`** | Security | `missing-authorization` | Mutating route handlers (`POST/PUT/DELETE`) modifying DB without auth. |
+| **`API-002`** | CodeQuality | `inconsistent-error-contract`| Swallowed exceptions in empty catch blocks destroying stack traces. |
+| **`API-003`** | Security | `breaking-contract-change` | Breaking modifications to route signatures or public endpoint contracts. |
+| **`API-004`** | CodeQuality | `duplicated-validation` | Redundant manual validation checks immediately after schema validation. |
+| **`API-005`** | Architecture | `unbounded-http-request` | Outgoing raw HTTP requests executed without explicit timeout or AbortSignal. |
+| **`DB-001`** | Database | `missing-index` | Foreign key relation columns declared in schemas/SQL without indexes. |
+| **`DB-002`** | Database | `n-plus-one` | Database queries executed synchronously inside iteration loops. |
+| **`DB-003`** | Database | `unsafe-migration` | `ALTER TABLE ADD COLUMN NOT NULL` without `DEFAULT` on populated tables. |
+| **`DB-004`** | Database | `destructive-migration` | Irreversible `DROP TABLE` or `DROP COLUMN` operations without waivers. |
+| **`DB-005`** | Database | `multi-mutation-boundary` | Cross-entity multi-mutations executed without an atomic transaction. |
+| **`TEST-001`** | Testing | `changed-behavior-without-coverage` | Source files modified in a changeset with 0 test file updates. |
+| **`TEST-002`** | Testing | `weak-assertion` | Weak or tautological assertions (`expect(true).toBe(true)`) generating fake coverage. |
+| **`TEST-003`** | Testing | `missing-failure-path-coverage` | Services with explicit error throws whose tests cover only happy paths. |
+| **`TEST-004`** | Testing | `committed-focused-or-skipped-test` | Committed `.only`, `.skip`, `fit`, `xit` markers that bypass test suites. |
+| **`SLOP-001`** | Slop | `generic-abstraction` | Pass-through Factory classes wrapping single hardcoded concrete classes. |
+| **`SLOP-002`** | Slop | `repeated-boilerplate` | Tautological echo comments that literally rephrase the following line. |
+| **`SLOP-003`** | Slop | `speculative-infrastructure`| Extensible plugin/strategy registries with only 1 registered implementation. |
+| **`SLOP-004`** | Slop | `unnecessary-configuration` | Phantom environment variables used in code missing from `.env.example`. |
 
 ---
 
-## Regression Test Suite
+## Automated Test Suite
 
-All 32 detectors, attribution logic, waiver policies, and provider adapters are verified by automated tests against real code fixtures:
+All 32 code detectors, 49 UI detectors, attribution logic, waiver policies, and provider adapters are verified by 119 automated regression tests:
 
 ```bash
 npm test
-```
-
-```text
-✔ Baseline Attribution: distinguishes BASELINE vs NEW findings (1.9ms)
-✔ CLI: ei --help outputs available command surface (807ms)
-✔ CLI: ei detect --json returns structured JSON with summary (752ms)
-✔ CLI: ei impact outputs dependency graph tree (735ms)
-✔ CLI: ei sync-providers updates provider configurations (733ms)
-✔ ARCH-001: detects single-implementation interface (5.3ms)
-✔ ARCH-002: detects duplicated responsibility across classes (1.9ms)
-✔ ARCH-004: detects direct database access in UI client component (1.7ms)
-✔ CODE-003: detects excessive indirection and pass-through functions (1.4ms)
-✔ DB-001: detects missing database index on foreign key column (1.6ms)
-✔ DB-003: detects unsafe migration adding NOT NULL without DEFAULT (1.4ms)
-✔ DB-002: detects N+1 database queries in loop (1.4ms)
-✔ API-001: detects missing authorization guard on mutating handler (1.8ms)
-✔ TEST-002: detects weak tautological assertions (1.7ms)
-✔ SLOP-001: detects speculative pass-through factory (1.3ms)
-✔ SLOP-002: detects tautological echo comments (1.3ms)
-✔ SLOP-003: detects speculative plugin registries with 1 registration (1.1ms)
-✔ Ignores: respects rule-level waiver (0.8ms)
-✔ Ignores: respects inline disable comment (0.2ms)
-✔ Providers: registry contains first-class providers (AGY, Claude, Codex) (0.7ms)
-✔ AGY Adapter: detects capabilities and generates hooks & skill artifacts (88ms)
-✔ Claude Adapter: generates skill artifact and maps commands (0.3ms)
-✔ Codex Adapter: generates copilot-instructions.md (0.1ms)
-✔ Reviewer: derives BLOCK when BLOCKERS > 0 (2.2ms)
-✔ Reviewer: enforces UNKNOWN != PASS (0.2ms)
-✔ Reviewer: derives FIX when high-impact issues exist without blockers (0.3ms)
-✔ Reviewer: derives SHIP when zero blockers, zero fixes, zero unknowns (0.1ms)
-
-27 passing (3.4s)
 ```
 
 ---
@@ -598,4 +454,3 @@ Engineering Intelligence is open source under the [MIT License](LICENSE).
 * **Repository:** [github.com/devravik/engineering-intelligence](https://github.com/devravik/engineering-intelligence)
 * **Author:** Ravi Krishnan Gupta ([dev.ravikgupt@gmail.com](mailto:dev.ravikgupt@gmail.com))
 * **Contributions:** See [CONTRIBUTING.md](CONTRIBUTING.md) to add detectors or failure fixtures.
-
