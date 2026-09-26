@@ -1,7 +1,7 @@
 {
   "name": "engineering-intelligence",
   "version": "0.1.0",
-  "description": "Senior engineering & UI quality control for AI coding agents: detect, attribute, prioritize, repair, verify.",
+  "description": "Review and improve AI-generated software for architecture, security, APIs, databases, testing, complexity, UI quality, and AI slop.",
   "author": {
     "name": "Ravi Krishnan Gupta",
     "email": "dev.ravikgupt@gmail.com"

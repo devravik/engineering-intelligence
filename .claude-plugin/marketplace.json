@@ -2,7 +2,7 @@
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "engineering-intelligence",
   "metadata": {
-    "description": "Senior engineering & UI quality control for AI coding agents: detect, attribute, prioritize, repair, verify."
+    "description": "The quality-control layer for AI coding agents: detect concrete evidence, challenge unnecessary complexity, eliminate AI slop, and verify production readiness."
   },
   "owner": {
     "name": "Ravi Krishnan Gupta",
@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "engineering-intelligence",
-      "description": "Senior engineering & UI quality control for Claude Code: detect, attribute, prioritize, repair, verify.",
+      "description": "Review and improve AI-generated software for architecture, security, APIs, databases, testing, complexity, UI quality, and AI slop.",
       "version": "0.1.0",
       "author": {
         "name": "Ravi Krishnan Gupta",
@@ -21,13 +21,15 @@
       "category": "development",
       "homepage": "https://github.com/devravik/engineering-intelligence",
       "tags": [
-        "code-quality",
+        "ai-coding-agents",
         "code-review",
-        "anti-slop",
-        "ui-intelligence",
-        "testing",
+        "software-architecture",
+        "code-quality",
         "security",
-        "architecture"
+        "testing",
+        "frontend-ui-ux",
+        "anti-slop",
+        "engineering-quality"
       ]
     }
   ]

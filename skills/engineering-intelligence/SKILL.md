@@ -1,6 +1,6 @@
 ---
 name: engineering-intelligence
-description: Engineering quality control for AI coding agents (detect, attribute, prioritize, repair, verify). Enforces deterministic contracts, baseline attribution, and finding matrices.
+description: Review and improve AI-generated software for architecture, security, APIs, databases, testing, complexity, UI quality, and AI slop. Uses evidence, project context, and verification.
 ---
 
 # Engineering Intelligence (EI)

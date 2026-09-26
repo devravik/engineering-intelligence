@@ -26,6 +26,7 @@
     "templates",
     "commands",
     ".claude-plugin",
+    ".mcp.json",
     "README.md",
     "SKILL.md"
   ],
