@@ -120,11 +120,10 @@ test('Claude Plugin & Marketplace: manifests are valid and version-locked with p
 
   assert.strictEqual(plugin.name, 'engineering-intelligence');
   assert.strictEqual(plugin.version, pkg.version, 'Plugin version must match package.json version');
-  assert.ok(Array.isArray(plugin.skills));
-  assert.ok(Array.isArray(plugin.commands));
+  assert.ok(typeof plugin.skills === 'string' || Array.isArray(plugin.skills));
+  assert.ok(typeof plugin.commands === 'string' || Array.isArray(plugin.commands));
 
-  assert.strictEqual(marketplace.version, pkg.version, 'Marketplace version must match package.json version');
-  assert.ok(Array.isArray(marketplace.plugins));
-  assert.strictEqual(marketplace.plugins[0].id, 'engineering-intelligence');
-  assert.strictEqual(marketplace.plugins[0].version, pkg.version);
+  const marketplacePlugin = marketplace.plugins[0];
+  assert.strictEqual(marketplacePlugin.name, 'engineering-intelligence');
+  assert.strictEqual(marketplacePlugin.version, pkg.version);
 });

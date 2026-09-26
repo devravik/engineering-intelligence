@@ -1,3 +1,7 @@
+---
+description: Execute 8-step anti-entropy simplification loop to eliminate dead code and unnecessary abstraction
+---
+
 # `/simplify` — The 8-Step Anti-Entropy Loop
 
 `/simplify` is a first-class detector-driven refactoring loop that eliminates artificial complexity, dead code, and speculative abstractions.

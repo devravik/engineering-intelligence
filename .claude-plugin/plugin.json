@@ -7,38 +7,8 @@
     "email": "dev.ravikgupt@gmail.com"
   },
   "homepage": "https://github.com/devravik/engineering-intelligence",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/devravik/engineering-intelligence.git"
-  },
+  "repository": "https://github.com/devravik/engineering-intelligence",
   "license": "MIT",
-  "skills": [
-    {
-      "name": "engineering-intelligence",
-      "path": "skills/engineering-intelligence/SKILL.md",
-      "description": "Engineering quality control and UI intelligence for AI coding agents."
-    }
-  ],
-  "commands": [
-    {
-      "name": "review",
-      "description": "Run matrix-based engineering review with baseline attribution and unknown checking."
-    },
-    {
-      "name": "simplify",
-      "description": "Execute anti-entropy simplification loop to eliminate pass-through factories and echo comments."
-    },
-    {
-      "name": "impact",
-      "description": "Generate dependency graph and blast-radius change risk analysis."
-    },
-    {
-      "name": "ship",
-      "description": "Enforce 10-point release gate (BLOCK, FIX, or SHIP)."
-    },
-    {
-      "name": "ui",
-      "description": "UI Intelligence engine: multi-viewport inspection, 5-pass critique, and anti-slop distillation."
-    }
-  ]
+  "skills": "./skills/",
+  "commands": "./commands/"
 }

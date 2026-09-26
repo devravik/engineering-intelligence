@@ -1,3 +1,7 @@
+---
+description: Pre-merge release gate verifying 10 production checks and enforcing UNKNOWN != PASS
+---
+
 # `/ship` — The Deterministic Release Gate
 
 `/ship` is an uncompromising pre-release gate. It does not simply display an advisory checklist; it executes verification preconditions and produces a binding **SHIP** or **DO NOT SHIP** verdict.

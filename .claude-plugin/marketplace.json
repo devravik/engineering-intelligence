@@ -1,18 +1,25 @@
 {
-  "name": "devravik/engineering-intelligence",
-  "version": "0.1.0",
-  "description": "Senior engineering & UI quality control for AI coding agents: detect, attribute, prioritize, repair, verify.",
-  "publisher": "devravik",
-  "repository": "https://github.com/devravik/engineering-intelligence",
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "engineering-intelligence",
+  "metadata": {
+    "description": "Senior engineering & UI quality control for AI coding agents: detect, attribute, prioritize, repair, verify."
+  },
+  "owner": {
+    "name": "Ravi Krishnan Gupta",
+    "email": "dev.ravikgupt@gmail.com"
+  },
   "plugins": [
     {
-      "id": "engineering-intelligence",
-      "name": "Engineering Intelligence",
+      "name": "engineering-intelligence",
+      "description": "Senior engineering & UI quality control for Claude Code: detect, attribute, prioritize, repair, verify.",
       "version": "0.1.0",
-      "description": "Engineering quality control and UI intelligence for Claude Code.",
-      "skills": [
-        "skills/engineering-intelligence/SKILL.md"
-      ],
+      "author": {
+        "name": "Ravi Krishnan Gupta",
+        "email": "dev.ravikgupt@gmail.com"
+      },
+      "source": "./",
+      "category": "development",
+      "homepage": "https://github.com/devravik/engineering-intelligence",
       "tags": [
         "code-quality",
         "code-review",

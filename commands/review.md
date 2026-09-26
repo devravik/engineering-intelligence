@@ -1,3 +1,7 @@
+---
+description: Run matrix-based engineering review with baseline attribution and machine-derived disposition
+---
+
 # `/review` — Matrix-Based Engineering Review
 
 In Engineering Intelligence, code review is an **evidence-driven matrix**, not an essay of generic opinions.

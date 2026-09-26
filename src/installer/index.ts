@@ -444,7 +444,8 @@ export async function runDoctor(repoRoot: string): Promise<DoctorReport> {
   let marketplaceVersion: string | undefined;
   if (hasMarketplaceJson) {
     try {
-      marketplaceVersion = JSON.parse(readFileSync(marketplacePath, 'utf-8')).version;
+      const parsedMarketplace = JSON.parse(readFileSync(marketplacePath, 'utf-8'));
+      marketplaceVersion = parsedMarketplace.version || parsedMarketplace.plugins?.[0]?.version;
     } catch {}
   }
 

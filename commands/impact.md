@@ -1,3 +1,7 @@
+---
+description: Generate symbol dependency graph and blast-radius change risk analysis
+---
+
 # `/impact` — Graph-Based Blast Radius Analysis
 
 `/impact` replaces intuitive guesses with deterministic call-graph traversal to map the blast radius and regression risks of changing a symbol or file.
