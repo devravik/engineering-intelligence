@@ -123,11 +123,35 @@ Findings are categorized into four tiers:
 
 ---
 
+## Review vs. Ship Semantics
+
+Engineering Intelligence explicitly decouples diagnostic evaluation from release gate enforcement:
+
+```text
+/ei:review
+    → findings
+    → physical evidence (file, line, snippet, hash)
+    → attribution (BASELINE vs NEW vs MODIFIED)
+    → confidence scores
+    → actionable recommendations
+    → UNKNOWN areas requiring engineering judgment
+
+/ei:ship
+    → release verification preconditions
+    → strict enforcement: UNKNOWN != PASS
+    → terminal verdict: BLOCK / FIX / SHIP
+```
+
+* `/ei:review` does **not** fail the build or exit 1 merely because UNKNOWN areas or recommendations exist. It provides diagnostic transparency and proposed fixes so developers and AI agents can reason about them.
+* `/ei:ship` serves as the hard release gate where unverified paths or blockers prevent deployment.
+
+---
+
 ## Agent Instructions for `/ei:review`
 
 When you as an agent are instructed to run `/ei:review`:
-1. Inspect `git status` and `git diff` using local tools.
-2. Read `.ei/context.md` and `.ei/architecture.md` if they exist.
-3. Verify claims by checking caller files or grepping for symbol usages.
-4. Suppress superficial comments; only report issues that a Principal Engineer would stop a pull request for.
-5. Provide precise, copy-pasteable diffs for all proposed fixes.
+1. Execute `ei review` to obtain the machine-verified finding matrix and evidence.
+2. Read `.ei/PROJECT.md` and `.ei/ARCHITECTURE.md` to ground domain decisions.
+3. Review physical evidence snippets and confidence ratings.
+4. Address highlighted UNKNOWN areas by investigating unverified surfaces or adding missing coverage.
+5. Apply actionable recommendations to simplify and harden code before proceeding to `/ei:ship`.

@@ -1,4 +1,4 @@
-import { Category, Finding, Disposition, Severity, Confidence } from '../findings/types.js';
+import { Category, Finding, EIFinding, Disposition, Severity, Confidence } from '../findings/types.js';
 
 export interface DisciplineRow {
   category: Category;
@@ -7,6 +7,21 @@ export interface DisciplineRow {
   highestConfidence: Confidence | 'NONE';
   disposition: Disposition;
   findingsCount: number;
+}
+
+export interface ReviewRecommendation {
+  ruleId: string;
+  category: Category;
+  severity: Severity;
+  target: string;
+  action: string;
+  rationale: string;
+}
+
+export interface ReviewUnknown {
+  area: string;
+  reason: string;
+  guidance: string;
 }
 
 export interface ReviewMatrix {
@@ -20,16 +35,40 @@ export interface ReviewMatrix {
   baselineAttribution: {
     baselineCount: number;
     newCount: number;
+    modifiedCount: number;
     resolvedCount: number;
+    unknownCount: number;
   };
+  recommendations: ReviewRecommendation[];
+  unknowns: ReviewUnknown[];
   finalDisposition: Disposition;
 }
 
+export interface ShipGateResult {
+  passed: boolean;
+  terminalDisposition: 'BLOCK' | 'FIX' | 'SHIP';
+  blockers: number;
+  fixes: number;
+  unknowns: number;
+  reasons: string[];
+  matrix: ReviewMatrix;
+}
+
+/**
+ * Builds the diagnostic Review Matrix for `ei review`.
+ * Evaluates disciplines, evidence, attribution, confidence, recommendations, and highlighted UNKNOWN areas.
+ */
 export function buildReviewMatrix(
-  findings: Finding[],
+  findings: (Finding | EIFinding)[],
   options: {
     unknownCount?: number;
-    baselineCounts?: { baseline: number; new: number; resolved: number };
+    baselineCounts?: {
+      baseline?: number;
+      new?: number;
+      modified?: number;
+      resolved?: number;
+      unknown?: number;
+    };
   } = {}
 ): ReviewMatrix {
   const categories: Category[] = [
@@ -42,10 +81,54 @@ export function buildReviewMatrix(
   ];
 
   const disciplines: DisciplineRow[] = [];
+  const recommendations: ReviewRecommendation[] = [];
+  const unknowns: ReviewUnknown[] = [];
+
   let blockers = 0;
   let fix = 0;
   let advisory = 0;
-  const unknown = options.unknownCount || 0;
+
+  // Process findings and populate recommendations & unknowns
+  for (const f of findings) {
+    if (f.suggestedFix) {
+      recommendations.push({
+        ruleId: f.ruleId,
+        category: f.category,
+        severity: f.impact,
+        target: `${f.filePath || f.evidence?.file || 'unknown'}:${f.line || f.evidence?.line || 1}`,
+        action: f.suggestedFix,
+        rationale: f.title
+      });
+    }
+
+    if (f.attribution === 'UNKNOWN' || f.confidence === 'LOW') {
+      unknowns.push({
+        area: `${f.filePath || f.evidence?.file || 'unknown'}:${f.line || f.evidence?.line || 1} (${f.ruleId})`,
+        reason: f.confidence === 'LOW' ? 'Low-confidence heuristic detection' : 'Unattributed baseline origin',
+        guidance: 'Verify manually with git blame or inspect upstream contracts.'
+      });
+    }
+
+    if (f.ruleId === 'TEST-001') {
+      unknowns.push({
+        area: `${f.filePath || f.evidence?.file || 'unknown'} (Test Coverage)`,
+        reason: 'Modified source behavior without accompanying regression tests',
+        guidance: 'Author explicit unit or integration tests for the modified execution path.'
+      });
+    }
+  }
+
+  // Handle explicit unknownCount option
+  const totalUnknowns = (options.unknownCount !== undefined ? options.unknownCount : unknowns.length);
+  if (options.unknownCount && unknowns.length === 0) {
+    for (let i = 0; i < options.unknownCount; i++) {
+      unknowns.push({
+        area: `Unverified surface #${i + 1}`,
+        reason: 'Unverified execution branch or omitted test verification',
+        guidance: 'Perform deterministic test execution or add explicit verification waivers.'
+      });
+    }
+  }
 
   for (const cat of categories) {
     const catFindings = findings.filter(f => f.category === cat);
@@ -89,7 +172,7 @@ export function buildReviewMatrix(
 
     disciplines.push({
       category: cat,
-      evidenceSymbol: '✓',
+      evidenceSymbol: highestImpact === 'CRITICAL' ? '✗' : highestImpact === 'HIGH' ? '~' : '✓',
       highestImpact,
       highestConfidence,
       disposition: catDisposition,
@@ -97,12 +180,11 @@ export function buildReviewMatrix(
     });
   }
 
-  // Derive final terminal disposition
+  // Derive diagnostic summary disposition
   let finalDisposition: Disposition = 'SHIP';
   if (blockers > 0) {
     finalDisposition = 'BLOCK';
-  } else if (unknown > 0) {
-    // UNKNOWN != PASS rule
+  } else if (totalUnknowns > 0) {
     finalDisposition = 'BLOCK';
   } else if (fix > 0) {
     finalDisposition = 'FIX';
@@ -116,18 +198,26 @@ export function buildReviewMatrix(
       blockers,
       fix,
       advisory,
-      unknown
+      unknown: totalUnknowns
     },
     baselineAttribution: {
       baselineCount: options.baselineCounts?.baseline || 0,
       newCount: options.baselineCounts?.new || 0,
-      resolvedCount: options.baselineCounts?.resolved || 0
+      modifiedCount: options.baselineCounts?.modified || 0,
+      resolvedCount: options.baselineCounts?.resolved || 0,
+      unknownCount: options.baselineCounts?.unknown || totalUnknowns
     },
+    recommendations,
+    unknowns,
     finalDisposition
   };
 }
 
-export function formatReviewMatrix(matrix: ReviewMatrix, detailedFindings: Finding[] = []): string {
+/**
+ * Formats the diagnostic output for `ei review`.
+ * Emphasizes findings, evidence, attribution, confidence, recommendations, and UNKNOWN areas.
+ */
+export function formatReviewMatrix(matrix: ReviewMatrix, detailedFindings: (Finding | EIFinding)[] = []): string {
   const lines: string[] = [];
 
   lines.push('================================================================');
@@ -156,37 +246,153 @@ export function formatReviewMatrix(matrix: ReviewMatrix, detailedFindings: Findi
   }
 
   lines.push('----------------------------------------------------------------');
-  lines.push('ATTRIBUTION:');
+  lines.push('BASELINE ATTRIBUTION:');
   lines.push(
     `  Baseline: ${matrix.baselineAttribution.baselineCount} existing | ` +
       `New: ${matrix.baselineAttribution.newCount} | ` +
+      `Modified: ${matrix.baselineAttribution.modifiedCount} | ` +
       `Resolved: ${matrix.baselineAttribution.resolvedCount}`
   );
   lines.push('');
-  lines.push('CURRENT STATE:');
-  lines.push(`  BLOCKERS:  ${matrix.currentCounts.blockers}`);
-  lines.push(`  FIX:       ${matrix.currentCounts.fix}`);
-  lines.push(`  ADVISORY:  ${matrix.currentCounts.advisory}`);
-  lines.push(`  UNKNOWN:   ${matrix.currentCounts.unknown}`);
-  lines.push('');
-  lines.push('================================================================');
-  lines.push(`FINAL DISPOSITION: ${matrix.finalDisposition}`);
-  lines.push('================================================================');
+  lines.push('SESSION SUMMARY:');
+  lines.push(`  BLOCKERS:      ${matrix.currentCounts.blockers}`);
+  lines.push(`  FIX REQUIRED:  ${matrix.currentCounts.fix}`);
+  lines.push(`  ADVISORY:      ${matrix.currentCounts.advisory}`);
+  lines.push(`  UNKNOWN AREAS: ${matrix.currentCounts.unknown}`);
+
+  // Highlight UNKNOWN areas requiring engineering judgment / LLM reasoning
+  if (matrix.unknowns.length > 0) {
+    lines.push('');
+    lines.push('UNKNOWN / UNVERIFIED SURFACES (Requires Reasoning or Coverage):');
+    for (const u of matrix.unknowns) {
+      lines.push(`  ? ${u.area}`);
+      lines.push(`    Reason:   ${u.reason}`);
+      lines.push(`    Guidance: ${u.guidance}`);
+    }
+  }
+
+  // Highlight actionable recommendations
+  if (matrix.recommendations.length > 0) {
+    lines.push('');
+    lines.push('ACTIONABLE RECOMMENDATIONS:');
+    for (const r of matrix.recommendations) {
+      lines.push(`  → [${r.severity}] ${r.target} (${r.ruleId}): ${r.action}`);
+      lines.push(`    Rationale: ${r.rationale}`);
+    }
+  }
 
   if (detailedFindings.length > 0) {
     lines.push('');
-    lines.push('DETAILED FINDINGS:');
+    lines.push('DETAILED FINDINGS & PHYSICAL EVIDENCE:');
     for (const f of detailedFindings) {
+      const file = f.evidence?.file || f.filePath;
+      const line = f.evidence?.line || f.line;
+      const hash = f.evidence?.hash || f.evidenceHash;
+      const snippet = f.evidence?.snippet || String(f.evidence);
+      const attribution = f.attribution || f.baselineStatus;
+
       lines.push(`- [${f.impact}] ${f.ruleId} (${f.category}): ${f.title}`);
-      lines.push(`  File: ${f.filePath}:${f.line}`);
-      lines.push(`  Baseline Status: ${f.baselineStatus} | Disposition: ${f.disposition}`);
-      lines.push(`  Evidence: ${f.evidence}`);
+      lines.push(`  Location:    ${file}:${line} [hash: ${hash}]`);
+      lines.push(`  Attribution: ${attribution} | Confidence: ${f.confidence} | Disposition: ${f.disposition}`);
+      lines.push(`  Evidence:    ${snippet}`);
       if (f.suggestedFix) {
-        lines.push(`  Fix: ${f.suggestedFix}`);
+        lines.push(`  Action:      ${f.suggestedFix}`);
       }
       lines.push('');
     }
   }
+
+  lines.push('================================================================');
+  lines.push(`REVIEW DISPOSITION: ${matrix.finalDisposition}`);
+  lines.push('================================================================');
+
+  return lines.join('\n');
+}
+
+/**
+ * Evaluates the terminal release gate for `ei ship`.
+ * Strictly enforces `UNKNOWN != PASS` and blocks if blockers or required fixes remain.
+ */
+export function evaluateShipGate(
+  matrix: ReviewMatrix,
+  findings: (Finding | EIFinding)[] = []
+): ShipGateResult {
+  const reasons: string[] = [];
+  let terminalDisposition: 'BLOCK' | 'FIX' | 'SHIP' = 'SHIP';
+
+  if (matrix.currentCounts.blockers > 0) {
+    terminalDisposition = 'BLOCK';
+    reasons.push(`${matrix.currentCounts.blockers} unresolved BLOCKER(s) detected in release path.`);
+  }
+
+  if (matrix.currentCounts.unknown > 0) {
+    terminalDisposition = 'BLOCK';
+    reasons.push(
+      `${matrix.currentCounts.unknown} UNKNOWN verification area(s) remain. UNKNOWN != PASS: release gate requires explicit verification.`
+    );
+  }
+
+  if (terminalDisposition !== 'BLOCK' && matrix.currentCounts.fix > 0) {
+    terminalDisposition = 'FIX';
+    reasons.push(
+      `${matrix.currentCounts.fix} high-priority FIX issue(s) must be resolved or explicitly waived before shipping.`
+    );
+  }
+
+  const passed = terminalDisposition === 'SHIP';
+  return {
+    passed,
+    terminalDisposition,
+    blockers: matrix.currentCounts.blockers,
+    fixes: matrix.currentCounts.fix,
+    unknowns: matrix.currentCounts.unknown,
+    reasons,
+    matrix
+  };
+}
+
+/**
+ * Formats the release verification report for `ei ship`.
+ */
+export function formatShipGate(gate: ShipGateResult): string {
+  const lines: string[] = [];
+
+  lines.push('================================================================');
+  lines.push('               PRODUCTION RELEASE VERIFICATION GATE             ');
+  lines.push('================================================================\n');
+
+  const check = (ok: boolean) => (ok ? '✓ PASS' : '✗ FAIL');
+
+  lines.push('RELEASE PRECONDITIONS:');
+  lines.push(`  ${check(gate.blockers === 0)} Zero Critical Blockers (${gate.blockers} active)`);
+  lines.push(`  ${check(gate.unknowns === 0)} Zero Unverified Surfaces (${gate.unknowns} unknown, UNKNOWN != PASS)`);
+  lines.push(`  ${check(gate.fixes === 0)} Zero Mandatory Fixes (${gate.fixes} required)`);
+  lines.push('');
+
+  lines.push('----------------------------------------------------------------');
+  if (gate.terminalDisposition === 'BLOCK') {
+    lines.push('🛑 RELEASE GATE VERDICT: BLOCKED');
+    lines.push('----------------------------------------------------------------');
+    lines.push('The release gate has rejected deployment for the following reasons:');
+    for (const r of gate.reasons) {
+      lines.push(`  • ${r}`);
+    }
+    lines.push('\nAction Required: Resolve blockers and verify all unknown surfaces before shipping.');
+  } else if (gate.terminalDisposition === 'FIX') {
+    lines.push('⚠️ RELEASE GATE VERDICT: ACTION REQUIRED');
+    lines.push('----------------------------------------------------------------');
+    lines.push('Deployment is held pending mandatory fixes:');
+    for (const r of gate.reasons) {
+      lines.push(`  • ${r}`);
+    }
+    lines.push('\nAction Required: Address flagged fixes or add explicit waivers with justifications.');
+  } else {
+    lines.push('🟢 RELEASE GATE VERDICT: APPROVED (SHIP)');
+    lines.push('----------------------------------------------------------------');
+    lines.push('✓ All deterministic contracts, baseline verifications, and gate criteria satisfied.');
+    lines.push('Code is safe and ready for deployment.');
+  }
+  lines.push('================================================================');
 
   return lines.join('\n');
 }

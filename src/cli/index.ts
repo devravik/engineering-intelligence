@@ -3,7 +3,12 @@
 import { resolve } from 'node:path';
 import { runDetectors } from '../detectors/index.js';
 import { initProjectContext } from '../context/index.js';
-import { buildReviewMatrix, formatReviewMatrix } from '../reviewer/index.js';
+import {
+  buildReviewMatrix,
+  formatReviewMatrix,
+  evaluateShipGate,
+  formatShipGate
+} from '../reviewer/index.js';
 import { analyzeImpact, formatImpactGraph } from '../impact/index.js';
 import {
   loadBaseline,
@@ -107,7 +112,10 @@ async function main() {
         }
       });
       console.log(formatReviewMatrix(matrix, result.findings));
-      process.exit(matrix.finalDisposition === 'BLOCK' ? 1 : 0);
+      // ei review is diagnostic: outputs findings, physical evidence, baseline attribution,
+      // confidence scores, recommendations, and highlighted UNKNOWN areas.
+      // It does not act as an aggressive release gate, allowing agents/devs to inspect and reason.
+      process.exit(0);
     }
 
     case 'impact': {
@@ -124,23 +132,18 @@ async function main() {
     case 'ship': {
       console.log('Verifying release readiness preconditions...\n');
       const result = await runDetectors(repoRoot);
-      const matrix = buildReviewMatrix(result.findings);
+      const matrix = buildReviewMatrix(result.findings, {
+        baselineCounts: {
+          baseline: result.summary.baselineCount,
+          new: result.summary.newCount,
+          resolved: result.summary.resolvedCount
+        }
+      });
+      const gate = evaluateShipGate(matrix, result.findings);
 
-      console.log(formatReviewMatrix(matrix));
+      console.log(formatShipGate(gate));
 
-      if (matrix.finalDisposition === 'BLOCK') {
-        console.log('\n🛑 SHIP GATE: REJECTED');
-        console.log('Unresolved BLOCKERS prevent release. UNKNOWN != PASS.');
-        process.exit(1);
-      } else if (matrix.finalDisposition === 'FIX') {
-        console.log('\n⚠️ SHIP GATE: ACTION REQUIRED');
-        console.log('High-priority fixes must be addressed or explicitly waived.');
-        process.exit(1);
-      } else {
-        console.log('\n🟢 SHIP GATE: APPROVED');
-        console.log('All deterministic contracts and verification gates passed.');
-        process.exit(0);
-      }
+      process.exit(gate.passed ? 0 : 1);
     }
 
     case 'simplify': {
@@ -169,20 +172,8 @@ async function main() {
       const sub = args[1] || 'show';
       if (sub === 'create' || sub === 'update') {
         const result = await runDetectors(repoRoot);
-        // Map active findings to raw
-        const raw = result.findings.map(f => ({
-          ruleId: f.ruleId,
-          category: f.category,
-          title: f.title,
-          message: f.message,
-          filePath: f.filePath,
-          line: f.line,
-          evidence: f.evidence,
-          confidence: f.confidence,
-          impact: f.impact
-        }));
-        createBaselineFromFindings(repoRoot, raw);
-        console.log(`✓ Baseline snapshot created with ${raw.length} entries at ${getBaselinePath(repoRoot)}`);
+        createBaselineFromFindings(repoRoot, result.findings);
+        console.log(`✓ Baseline snapshot created with ${result.findings.length} entries at ${getBaselinePath(repoRoot)}`);
       } else {
         const state = loadBaseline(repoRoot);
         console.log(`Baseline created at: ${state.createdAt}`);

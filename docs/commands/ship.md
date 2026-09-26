@@ -1,10 +1,17 @@
 # `/ei:ship` — Production Readiness Verification
 
-The `/ei:ship` command serves as the final, rigorous release gate before deploying code to production.
+The `/ei:ship` command serves as the final, rigorous release verification gate before deploying code to production.
 
 AI-generated features often pass local unit tests but fail disastrously upon release due to **unmigrated database schemas, missing environment variables, absent telemetry, unhandled edge-case timeouts, or security regressions**.
 
-`/ei:ship` executes a systematic 10-point production readiness protocol and issues an explicit **Go / No-Go** deployment verdict.
+`/ei:ship` executes a systematic 10-point production readiness protocol and issues an explicit terminal verdict: **`BLOCK`**, **`FIX`**, or **`SHIP`**.
+
+### The Release Gate Invariant: `UNKNOWN != PASS`
+While `/ei:review` provides diagnostic evaluation and recommendations without halting agent workflows, `/ei:ship` enforces strict release preconditions:
+* Any active **`CRITICAL`** finding ➔ **`BLOCK`**
+* Any unverified code branch or missing test coverage (**`UNKNOWN > 0`**) ➔ **`BLOCK`**
+* Any required high-priority fix (**`FIX > 0`**) ➔ **`FIX`**
+* Clean and fully verified ➔ **`SHIP`**
 
 ---
 

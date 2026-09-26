@@ -36,74 +36,149 @@ Deterministic Evidence + Project Context + LLM Reasoning + Baseline Attribution 
 
 ---
 
-## Architecture: From Prompt Prose to Deterministic QC
+## Frozen Core Architecture
 
 ```text
-                      ENGINEERING INTELLIGENCE
-                                 │
-                 ┌───────────────┴───────────────┐
-                 │                               │
-           Reasoning Core                 Evidence Engine
-                 │                               │
-        ┌────────┼────────┐             ┌────────┼────────┐
-        │        │        │             │        │        │
-     Context  Intent   Priority        Git     Static  Runtime
-        │        │        │             │        │        │
-        └────────┼────────┘             └────────┼────────┘
-                 │                               │
-                 └───────────────┬───────────────┘
-                                 ↓
-                           Finding Matrix
-                                 ↓
-                       Fix / Simplify / Ship
-                                 ↓
-                            Verification
+                     ENGINEERING INTELLIGENCE
+                              │
+                 ┌────────────┴────────────┐
+                 │                         │
+          Evidence Engine            Context Engine
+                 │                         │
+          ┌──────┼──────┐            Project Memory
+          │      │      │
+      Detectors Baseline Impact
+          │      │      │
+          └──────┼──────┘
+                 ▼
+          FINDING NORMALIZER
+                 │
+                 ▼
+          LLM / Semantic Reasoning
+                 │
+                 ▼
+           Review Matrix
+              │     │
+              │     └───────── ei review  (Diagnostic: findings, evidence, attribution, confidence, recommendations, UNKNOWN)
+              │
+              └─────────────── ei ship    (Release Gate: BLOCK / FIX / SHIP, enforcing UNKNOWN != PASS)
+                              │
+                    BLOCK / FIX / SHIP
+
+                 Standard EI Protocol
+                        │
+        ┌───────┬───────┼───────┬───────┐
+       AGY   Claude   Codex   OpenCode   ...
 ```
 
 ---
 
-## Core Pillars
+## The Six-Stage Quality Pipeline
 
-### 1. Deterministic Detector Engine (`ei detect`)
-Deterministic inspection rules run locally without LLM token latency or hallucinations. Every finding is anchored to an exact file, line number, code snippet, and **cryptographic evidence hash**.
+The core value proposition of Engineering Intelligence is the deterministic evidence ➔ attribution ➔ reasoning ➔ verification pipeline:
 
-### 2. Baseline Attribution (No Blaming New Edits for Legacy Debt)
-If your repository already has 84 legacy issues, Engineering Intelligence records them in `.ei/state/baseline.json`. When you make a change, EI attributes findings:
 ```text
-BASELINE: 84 existing | THIS CHANGE: 2 new | 1 resolved
+Detectors
+    ↓
+Finding Normalizer
+    ↓
+Baseline Attribution
+    ↓
+Project Context
+    ↓
+LLM Reasoning
+    ↓
+Review Matrix
 ```
-Only newly introduced debt affects your current session disposition.
 
-### 3. Machine-Derived Review Matrix (`UNKNOWN != PASS`)
-Instead of a vague, conversational essay, `ei review` outputs a structured finding matrix. The terminal disposition is mechanically derived:
-* `BLOCKERS > 0` ➔ **`BLOCK`**
-* `UNKNOWN > 0` ➔ **`BLOCK`** (`UNKNOWN != PASS`: unverified paths cannot pass)
-* `FIX > 0` ➔ **`FIX`**
-* Clean & verified ➔ **`SHIP`**
+### 1. The Canonical Internal Finding Contract (`EIFinding`)
+The **Finding Normalizer** acts as the stable interface boundary between raw deterministic analysis and reasoning layers. Every finding conforms to:
 
-### 4. Mandatory Waiver Rationale
-Exceptions cannot be silently disabled. The waiver system requires an explicit business or technical justification:
+```ts
+type EIFinding = {
+  ruleId: string
+  category: Category
+  severity: Severity
+
+  evidence: {
+    file: string
+    line: number
+    snippet: string
+    hash: string
+  }
+
+  attribution:
+    | "BASELINE"
+    | "NEW"
+    | "MODIFIED"
+    | "RESOLVED"
+    | "UNKNOWN"
+
+  confidence: Confidence
+  impact: Impact
+  disposition: Disposition
+}
+```
+
+### 2. Conservative Completeness (Evidence vs. Proof)
+Engineering Intelligence runs deterministic checks with zero token latency or LLM hallucination risk. However, EI maintains a strict philosophy around detection scope:
+* A detector finding means: **"EI found concrete evidence matching this rule."**
+* It does **not** mean: **"EI proved that no other instance exists."**
+
+Detection is grounded in physical code evidence; it does not claim formal mathematical absence in ambiguous or unanalyzed paths.
+
+### 3. Dynamic Git Merge-Base Attribution
+EI distinguishes pre-existing legacy technical debt from newly introduced debt using dynamic Git merge-base reconciliation (`git merge-base origin/main HEAD`) against `.ei/state/baseline.json`:
+```text
+BASELINE: 84 existing | THIS CHANGE: 2 new | 1 modified | 1 resolved
+```
+Legacy debt is tracked, not blamed on current pull requests.
+
+### 4. Explicitly Separated `review` and `ship` Semantics
+EI prevents the diagnostic review process from becoming an unnecessarily rigid deployment gate:
+
+```text
+ei review
+    → findings
+    → physical evidence (file, line, snippet, hash)
+    → attribution (BASELINE vs NEW vs MODIFIED)
+    → confidence scores
+    → actionable recommendations
+    → UNKNOWN areas requiring engineering judgment
+
+ei ship
+    → release verification preconditions
+    → strict enforcement: UNKNOWN != PASS
+    → terminal verdict: BLOCK / FIX / SHIP
+```
+
+* `ei review` provides deep diagnostic insight, recommendations, and unverified areas without halting agent workflows prematurely.
+* `ei ship` serves as the hard production gate where any unverified path or blocker yields `BLOCK`.
+
+### 5. Mandatory Waiver Rationale
+Exceptions cannot be silently disabled. The waiver system requires an explicit business or technical justification recorded in `.ei/ignores.json`:
 ```bash
 ei ignores add-rule ARCH-001 --reason "Required for external plugin architecture"
 ```
 
-### 5. Regression Test Corpus (`fixtures/`)
+### 6. Regression Test Corpus (`fixtures/`)
 Behavior lives in deterministic test contracts, not endlessly growing prompt instructions. Every observed agent failure is codified into a test fixture in `fixtures/` verified by `npm test`.
 
 ---
 
-## The V0 Command Suite
+## Command Suite
 
 | Command | Deterministic Action | Lifecycle Phase |
 | :--- | :--- | :--- |
 | **`ei init`** | Initializes `.ei/` context suite (`PROJECT.md`, `ARCHITECTURE.md`, `CONVENTIONS.md`, `state/`) | Setup / Onboarding |
-| **`ei detect`** | Runs 12 high-confidence deterministic detectors with evidence hashes | Continuous QC |
-| **`ei review`** | Generates discipline matrix and derives mechanical terminal disposition | Pre-Commit / PR |
+| **`ei detect`** | Runs 24 high-confidence deterministic detectors with SHA-256 evidence hashes and SARIF export | Continuous QC |
+| **`ei review`** | Diagnostic evaluation: generates matrix, attribution, recommendations, and highlights UNKNOWN areas | Pre-Commit / PR |
 | **`ei simplify`** | Runs 8-step anti-entropy loop; verifies LOC and abstraction reduction | Refactoring |
 | **`ei impact <target>`** | Traverses dependency graph across APIs, jobs, tests, and database | Planning / Pre-Merge |
-| **`ei ship`** | Enforces the 10-point production readiness verification gate | Release Gate |
-| **`ei baseline`** | Snapshots and reconciles existing technical debt in `baseline.json` | Debt Management |
+| **`ei ship`** | Enforces the production readiness verification gate (`BLOCK / FIX / SHIP`, `UNKNOWN != PASS`) | Release Gate |
+| **`ei baseline`** | Snapshots and reconciles technical debt in `baseline.json` using merge-base resolution | Debt Management |
 | **`ei ignores`** | Manages rule and file waivers with mandatory rationale | Compliance |
+| **`ei sync-providers`** | Generates provider configs across 16 tools via 5 archetype drivers | Multi-Provider Sync |
 
 ---
 

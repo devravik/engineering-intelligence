@@ -1,7 +1,13 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
-import { Finding, RawFinding, rawToFinding, computeEvidenceHash } from '../findings/types.js';
-
+import {
+  EIFinding,
+  Finding,
+  RawFinding,
+  computeEvidenceHash,
+  Attribution
+} from '../findings/types.js';
+import { FindingNormalizer } from '../findings/normalizer.js';
 import { execSync } from 'node:child_process';
 
 export interface BaselineEntry {
@@ -83,7 +89,6 @@ export function loadBaseline(
   }
 }
 
-
 export function saveBaseline(repoRoot: string, baseline: BaselineState): void {
   const dir = join(repoRoot, '.ei', 'state');
   if (!existsSync(dir)) {
@@ -93,18 +98,22 @@ export function saveBaseline(repoRoot: string, baseline: BaselineState): void {
   writeFileSync(getBaselinePath(repoRoot), JSON.stringify(baseline, null, 2), 'utf-8');
 }
 
-export function createBaselineFromFindings(repoRoot: string, findings: RawFinding[]): BaselineState {
+export function createBaselineFromFindings(
+  repoRoot: string,
+  findings: (RawFinding | EIFinding)[]
+): BaselineState {
   const now = new Date().toISOString();
   const entries: Record<string, BaselineEntry> = {};
 
-  for (const raw of findings) {
-    const hash = computeEvidenceHash(raw.ruleId, raw.filePath, raw.evidence);
-    entries[hash] = {
-      ruleId: raw.ruleId,
-      filePath: raw.filePath,
-      evidenceHash: hash,
+  const normalized = FindingNormalizer.normalizeBatch(findings);
+
+  for (const f of normalized) {
+    entries[f.evidence.hash] = {
+      ruleId: f.ruleId,
+      filePath: f.evidence.file,
+      evidenceHash: f.evidence.hash,
       firstSeen: now,
-      category: raw.category
+      category: f.category
     };
   }
 
@@ -120,38 +129,62 @@ export function createBaselineFromFindings(repoRoot: string, findings: RawFindin
 }
 
 export function attributeFindings(
-  rawFindings: RawFinding[],
+  findings: (RawFinding | EIFinding)[],
   baseline: BaselineState
 ): {
-  activeFindings: Finding[];
+  activeFindings: EIFinding[];
   summary: {
     baselineCount: number;
     newCount: number;
+    modifiedCount: number;
     resolvedCount: number;
+    unknownCount: number;
   };
 } {
-  const activeFindings: Finding[] = [];
+  const normalized = FindingNormalizer.normalizeBatch(findings);
+  const activeFindings: EIFinding[] = [];
   const currentHashes = new Set<string>();
 
-  let newCount = 0;
-  let baselineCount = 0;
+  // Map of ruleId:filePath to baseline entries to detect MODIFIED findings
+  const baselineByRuleAndFile = new Map<string, BaselineEntry>();
+  for (const entry of Object.values(baseline.entries)) {
+    baselineByRuleAndFile.set(`${entry.ruleId}:${entry.filePath}`, entry);
+  }
 
-  for (const raw of rawFindings) {
-    const hash = computeEvidenceHash(raw.ruleId, raw.filePath, raw.evidence);
+  let baselineCount = 0;
+  let newCount = 0;
+  let modifiedCount = 0;
+  let unknownCount = 0;
+
+  for (const finding of normalized) {
+    const hash = finding.evidence.hash;
     currentHashes.add(hash);
 
-    const isExisting = Boolean(baseline.entries[hash]);
-    const status = isExisting ? 'BASELINE' : 'NEW';
-    if (isExisting) {
+    const initialAttribution = finding.attribution;
+    const exactMatch = baseline.entries[hash];
+    if (exactMatch) {
+      finding.attribution = 'BASELINE';
+      finding.baselineStatus = 'BASELINE';
+      finding.firstSeen = exactMatch.firstSeen;
       baselineCount++;
     } else {
-      newCount++;
+      const ruleFileKey = `${finding.ruleId}:${finding.evidence.file}`;
+      if (baselineByRuleAndFile.has(ruleFileKey)) {
+        finding.attribution = 'MODIFIED';
+        finding.baselineStatus = 'MODIFIED';
+        finding.firstSeen = baselineByRuleAndFile.get(ruleFileKey)!.firstSeen;
+        modifiedCount++;
+      } else if (initialAttribution === 'UNKNOWN') {
+        finding.attribution = 'UNKNOWN';
+        finding.baselineStatus = 'UNKNOWN';
+        unknownCount++;
+      } else {
+        finding.attribution = 'NEW';
+        finding.baselineStatus = 'NEW';
+        newCount++;
+      }
     }
 
-    const finding = rawToFinding(raw, status);
-    if (isExisting && baseline.entries[hash]) {
-      finding.firstSeen = baseline.entries[hash].firstSeen;
-    }
     activeFindings.push(finding);
   }
 
@@ -168,7 +201,9 @@ export function attributeFindings(
     summary: {
       baselineCount,
       newCount,
-      resolvedCount
+      modifiedCount,
+      resolvedCount,
+      unknownCount
     }
   };
 }

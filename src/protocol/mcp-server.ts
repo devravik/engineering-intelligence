@@ -1,7 +1,12 @@
 import readline from 'node:readline';
 import { STANDARD_MCP_TOOLS } from './drivers/acp-mcp.js';
 import { runDetectors } from '../detectors/index.js';
-import { buildReviewMatrix, formatReviewMatrix } from '../reviewer/index.js';
+import {
+  buildReviewMatrix,
+  formatReviewMatrix,
+  evaluateShipGate,
+  formatShipGate
+} from '../reviewer/index.js';
 import { analyzeImpact } from '../impact/index.js';
 import { Finding } from '../findings/types.js';
 
@@ -132,8 +137,8 @@ export function startMcpServer(repoRoot: string): void {
               resolved: det.summary.resolvedCount
             }
           });
-          const passed = matrix.finalDisposition === 'SHIP';
-          const text = `Release Gate Status: ${matrix.finalDisposition}\nBlockers: ${matrix.currentCounts.blockers}\nClean: ${passed}`;
+          const gate = evaluateShipGate(matrix, det.findings);
+          const text = formatShipGate(gate);
           sendResponse(id, {
             content: [{ type: 'text', text }]
           });

@@ -14,6 +14,17 @@ export interface DetectorContext {
   changedFilesOnly?: boolean;
 }
 
+/**
+ * Detector Engine Philosophy: Conservative Completeness
+ *
+ * A detector finding means:
+ *   "EI found concrete evidence matching this rule."
+ * It does NOT mean:
+ *   "EI proved that no other instance exists."
+ *
+ * Deterministic detection provides unambiguous evidence anchors (file, line, snippet, hash),
+ * but never claims formal mathematical absence of unflagged issues across unmodeled or ambiguous paths.
+ */
 export interface Detector {
   id: string;
   name: string;

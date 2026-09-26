@@ -2,7 +2,8 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { execSync } from 'node:child_process';
 import { Detector, DetectorContext, FileEntry } from './types.js';
-import { RawFinding, Finding } from '../findings/types.js';
+import { RawFinding, Finding, EIFinding } from '../findings/types.js';
+import { FindingNormalizer } from '../findings/normalizer.js';
 import { loadIgnores, checkIgnored } from '../ignores/index.js';
 import { loadBaseline, attributeFindings } from '../baseline/index.js';
 
@@ -220,9 +221,12 @@ export async function runDetectors(
     }
   }
 
-  // Attribute against baseline
+  // Step 2 in Pipeline: Finding Normalizer converts raw detector matches into canonical EIFinding contracts
+  const normalizedFindings = FindingNormalizer.normalizeBatch(activeRawFindings);
+
+  // Step 3 in Pipeline: Attribute against baseline (BASELINE, NEW, MODIFIED, RESOLVED, UNKNOWN)
   const baseline = loadBaseline(repoRoot, { dynamicMergeBase: options.dynamicMergeBase });
-  const { activeFindings, summary } = attributeFindings(activeRawFindings, baseline);
+  const { activeFindings, summary } = attributeFindings(normalizedFindings, baseline);
 
 
   let blockers = 0;
