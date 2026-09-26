@@ -242,6 +242,103 @@ async function main() {
       break;
     }
 
+    // ═══════════════════════════════════════════════════════════════════════
+    // Distribution, Installation & Doctor Commands
+    // ═══════════════════════════════════════════════════════════════════════
+
+    case 'install': {
+      const isJson = args.includes('--json');
+      const isYes = args.includes('--yes') || args.includes('-y');
+
+      const scopeIdx = args.indexOf('--scope');
+      const scopeVal = scopeIdx !== -1 ? args[scopeIdx + 1] : 'project';
+      const scope = (scopeVal === 'global' || scopeVal === 'all') ? scopeVal : 'project';
+
+      const provIdx = args.indexOf('--providers') !== -1 ? args.indexOf('--providers') : args.indexOf('--provider');
+      const providers = provIdx !== -1 ? args[provIdx + 1]?.split(',') : undefined;
+
+      const { detectHarnesses, installProviders } = await import('../installer/index.js');
+
+      console.log('\n================================================================');
+      console.log('             ENGINEERING INTELLIGENCE INSTALLER');
+      console.log('================================================================\n');
+
+      const detected = detectHarnesses(repoRoot);
+      const detectedOnly = detected.filter(d => d.isDetected);
+
+      console.log('Detected AI Agent Harnesses:');
+      if (detectedOnly.length === 0) {
+        console.log('  (no specific agent harnesses auto-detected — defaulting to P0 reference harnesses)');
+      } else {
+        for (const d of detectedOnly) {
+          console.log(`  ✓ ${d.name.padEnd(26)} (${d.detectedReasons[0]})`);
+        }
+      }
+      console.log('');
+
+      const result = await installProviders({
+        repoRoot,
+        scope,
+        providers,
+        yes: isYes
+      });
+
+      if (isJson) {
+        console.log(JSON.stringify(result, null, 2));
+        break;
+      }
+
+      console.log(`Installed Engineering Intelligence [Scope: ${scope}]:`);
+      for (const item of result.installed) {
+        console.log(`  ✓ ${item.providerName}`);
+        for (const f of item.files) {
+          console.log(`    → ${f}`);
+        }
+      }
+
+      console.log('\n✓ Installation complete. Run `ei doctor` to verify system health.');
+      console.log('================================================================\n');
+      break;
+    }
+
+    case 'update': {
+      const isJson = args.includes('--json');
+      const { updateProviders } = await import('../installer/index.js');
+
+      console.log('\nUpdating installed Engineering Intelligence configurations...');
+      const result = await updateProviders(repoRoot);
+
+      if (isJson) {
+        console.log(JSON.stringify(result, null, 2));
+        break;
+      }
+
+      console.log(`\n${result.summary}`);
+      for (const item of result.updated) {
+        console.log(`  ✓ ${item.providerName}`);
+        for (const f of item.files) {
+          console.log(`    → ${f}`);
+        }
+      }
+      console.log('');
+      break;
+    }
+
+    case 'doctor': {
+      const isJson = args.includes('--json');
+      const { runDoctor, formatDoctorReport } = await import('../installer/index.js');
+
+      const report = await runDoctor(repoRoot);
+
+      if (isJson) {
+        console.log(JSON.stringify(report, null, 2));
+        break;
+      }
+
+      console.log(formatDoctorReport(report));
+      break;
+    }
+
     case 'providers': {
       const { ALL_PROVIDERS } = await import('../protocol/index.js');
       console.log('\n================================================================');
@@ -844,6 +941,11 @@ Engineering Commands:
   ei providers                     List all 16 supported coding agents & priority tiers
   ei sync-providers [--install]    Synchronize provider artifacts across P0-P3 tiers
   ei mcp                           Start stdio Agent Client Protocol (ACP) & MCP server
+
+Distribution & Installation Commands:
+  ei install [--scope project|global] [--providers list]   Install EI native skills/hooks for detected agents
+  ei update                                                Update installed skills and configurations
+  ei doctor                                                Audit installed harnesses, capabilities, and manifests
 
 UI Intelligence Commands:
   ei ui [detect|audit|critique|distill|document] [path]

@@ -1,0 +1,27 @@
+{
+  "name": "devravik/engineering-intelligence",
+  "version": "0.1.0",
+  "description": "Senior engineering & UI quality control for AI coding agents: detect, attribute, prioritize, repair, verify.",
+  "publisher": "devravik",
+  "repository": "https://github.com/devravik/engineering-intelligence",
+  "plugins": [
+    {
+      "id": "engineering-intelligence",
+      "name": "Engineering Intelligence",
+      "version": "0.1.0",
+      "description": "Engineering quality control and UI intelligence for Claude Code.",
+      "skills": [
+        "skills/engineering-intelligence/SKILL.md"
+      ],
+      "tags": [
+        "code-quality",
+        "code-review",
+        "anti-slop",
+        "ui-intelligence",
+        "testing",
+        "security",
+        "architecture"
+      ]
+    }
+  ]
+}

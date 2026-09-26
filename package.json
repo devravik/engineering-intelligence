@@ -4,7 +4,8 @@
   "description": "Engineering quality control for AI coding agents: detect, attribute, prioritize, repair, verify.",
   "type": "module",
   "bin": {
-    "ei": "./bin/ei.js"
+    "ei": "./bin/ei.js",
+    "engineering-intelligence": "./bin/ei.js"
   },
   "main": "./dist/index.js",
   "scripts": {
@@ -23,6 +24,7 @@
     "providers",
     "templates",
     "commands",
+    ".claude-plugin",
     "README.md",
     "SKILL.md"
   ],

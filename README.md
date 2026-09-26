@@ -250,24 +250,139 @@ DETAILED FINDINGS:
 
 ---
 
-## Quickstart
+## Distribution & Installation
 
-### 1. Installation
+Engineering Intelligence supports **three independent distribution channels** from a single canonical GitHub repository. Whether you use Antigravity, Claude Code, Cursor, Codex, OpenCode, or universal agent tooling, you can install EI with zero friction:
+
+```text
+                    ENGINEERING INTELLIGENCE
+                              │
+                 ┌────────────┴────────────┐
+                 │                         │
+            Distribution              Discovery
+                 │                         │
+         npx engineering-          Skills ecosystem
+         intelligence install      Claude Marketplace
+                 │                  Agent directories
+                 │                  GitHub
+                 │
+          Provider Adapters
+                 │
+      ┌──────────┼───────────┐
+      ▼          ▼           ▼
+     AGY      Claude       Codex
+```
+
+### 1. Primary Installer (`npx engineering-intelligence install`)
+The fastest and most powerful way to set up EI for whatever AI tools you use. It detects supported agent harnesses on your machine and provisions native skills, configuration, rules, and hooks:
 
 ```bash
-# Clone the repository
+# Auto-detect all active harnesses and install into current project
+npx engineering-intelligence install
+
+# Or install globally across user agent configuration directories (~/.gemini, ~/.claude, etc.)
+npx engineering-intelligence install --scope global
+
+# Or target specific agent harnesses
+npx engineering-intelligence install --providers agy,claude,cursor
+```
+
+To update all installed agent skills and provider bindings at any time:
+```bash
+npx engineering-intelligence update
+```
+
+To verify your agent harnesses, capabilities, detectors, hooks, and project context:
+```bash
+npx engineering-intelligence doctor
+```
+
+Output:
+```text
+================================================================
+             ENGINEERING INTELLIGENCE DOCTOR
+================================================================
+
+Target Repository: /path/to/project
+
+[AI Agent Harnesses]
+  ✓ Antigravity (AGY)          [P0 Core]     Installed (.agents/skills/engineering-intelligence/SKILL.md)
+  ✓ Claude Code                [P0 Core]     Installed (.claude/skills/engineering-intelligence/SKILL.md)
+  ✓ Codex                      [P0 Core]     Installed (codex.json)
+  ✓ OpenCode                   [P1 Harness]  Available in repo
+  ✓ Cursor                     [P0 Core]     Installed (.cursor/rules/engineering-intelligence.mdc)
+  ✓ Cline                      [P1 Harness]  Available in repo
+
+[Intelligence Capabilities]
+  ✓ Engineering Detectors:     32 deterministic rules loaded
+  ✓ UI Detectors:              49 rules across 5 categories loaded
+  ✓ Browser Engine:            Playwright available
+  ✓ MCP Server:                stdio agent client protocol active
+  ✓ Visual Reasoning:          Multimodal layout & spatial reasoning active
+
+[Agent Hooks & Enforcement]
+  ✓ Antigravity (AGY)          ACTIVE (.agents/hooks.json)
+  ✓ Claude Code                ACTIVE (.claude-plugin/plugin.json)
+  ✓ Codex                      CONFIGURED (approval requested for mutating actions)
+
+[Project Context]
+  ✓ Mission & Stack:           .ei/PROJECT.md
+  ✓ Architecture:              .ei/ARCHITECTURE.md
+  ✓ UI Design System:          .ei/DESIGN.md
+  ✓ Quality Baseline:          4 legacy findings tracked
+
+[Marketplace & Distribution Alignment]
+  ✓ Package Version:           0.1.0
+  ✓ Claude Plugin Manifest:    0.1.0 (.claude-plugin/plugin.json)
+  ✓ Claude Marketplace:        0.1.0 (.claude-plugin/marketplace.json)
+  ✓ Version Parity:            ALIGNED
+================================================================
+```
+
+---
+
+### 2. Universal Agent Skills Ecosystem (`npx skills add`)
+For skill-native agents following the open Agent Skills standard, install directly from the canonical skill definition without any custom CLI:
+
+```bash
+# Universal skill installation
+npx skills add https://github.com/devravik/engineering-intelligence --skill engineering-intelligence
+
+# Or via short repo shorthand
+npx skills add devravik/engineering-intelligence --skill engineering-intelligence
+```
+
+The canonical skill resides in [`skills/engineering-intelligence/SKILL.md`](skills/engineering-intelligence/SKILL.md) with self-contained detector references, commands, anti-slop doctrine, and verification scripts.
+
+---
+
+### 3. Claude Code Native Marketplace
+Install native Claude Code skill and slash commands directly from Claude Code's plugin interface:
+
+```text
+/plugin marketplace add devravik/engineering-intelligence
+```
+
+Provides `/detect`, `/review`, `/simplify`, `/impact`, `/ship`, and `/ui` as native Claude slash commands with guaranteed manifest version-lock parity.
+
+---
+
+### 4. Direct Git & Source Installation
+For offline, air-gapped, or development workflows:
+
+```bash
 git clone https://github.com/devravik/engineering-intelligence.git
 cd engineering-intelligence
-
-# Install dependencies and link CLI
 npm install
 npm link
 ```
 
-### 2. Initialize in Any Project
+---
 
+## Daily Workflow
+
+### 1. Initialize Project Memory
 ```bash
-cd /path/to/your/project
 ei init
 ```
 
@@ -285,13 +400,12 @@ This creates the persistent project context and state directories:
     └── sessions/       # Ephemeral session inspection runs
 ```
 
-### 3. Run Deterministic Quality Control
-
+### 2. Run Deterministic Quality Control
 ```bash
 # Check changed files in active Git branch
 ei detect --changed
 
-# Review changes against baseline
+# Review changes against baseline with machine-derived disposition
 ei review
 
 # Run anti-entropy simplification
