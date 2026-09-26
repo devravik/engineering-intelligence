@@ -1,19 +1,19 @@
-# Claude Code Provider Integration
+# Gemini CLI Provider Integration
 
-**Category:** TERMINAL | **Tier:** P0
+**Category:** TERMINAL | **Tier:** P1
 
-Terminal coding agent from Anthropic supporting slash commands and progressive skills.
+Google Gemini CLI developer assistant integrating with local codebase context.
 
 ---
 
 ## Ecosystem Notes
-Industry benchmark for CLI agent workflows.
+Terminal assistant leveraging Gemini models.
 
 ## Supported Protocol Channels
-- **skills**
+- **cli**
 
 ## Discovery & Configuration Paths
-- **skills**: `.claude/skills/engineering-intelligence/SKILL.md`
+- **config**: `.gemini/context.md`
 
 ---
 

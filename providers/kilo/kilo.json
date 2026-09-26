@@ -1,5 +1,5 @@
 {
-  "provider": "OpenCode",
+  "provider": "Kilo Code / CLI",
   "qualityEngine": "Engineering Intelligence",
   "checkCommand": "ei detect --changed",
   "reviewCommand": "ei review",

@@ -1,162 +1,131 @@
-# Cross-Platform Installation & Setup Guide
+# Multi-Agent Platform & Protocol Integration Guide
 
-Engineering Intelligence is designed to be cross-platform and agent-agnostic. Whether you use **Claude Code**, **Cursor**, **Codex**, **GitHub Copilot**, **Google Antigravity**, or **OpenCode**, you can install and run Engineering Intelligence natively.
-
----
-
-## Quick Install (Recommended)
-
-The fastest way to install Engineering Intelligence across all your coding environments is via the CLI installer:
-
-```bash
-npx engineering-intelligence install
-```
-
-The installer automatically detects the AI coding harnesses present on your machine, prompts you for target environments, and configures the relevant skill files and slash command aliases.
+Engineering Intelligence does not rely on 16 divergent, hand-crafted implementations. Instead, it provides a unified quality control core translated through **5 standard protocol archetype drivers**:
 
 ```text
-Engineering Intelligence Installer
-
-Detected Coding Environments:
-  [x] Claude Code        (~/.claude/skills)
-  [x] Cursor             (~/.cursor/rules)
-  [x] Google Antigravity (~/.gemini/config/skills)
-  [ ] OpenCode
-
-Configuring skills...
-✓ Installed /ei:init
-✓ Installed /ei:review
-✓ Installed /ei:simplify
-✓ Installed /ei:impact
-✓ Installed /ei:audit
-✓ Installed /ei:ship
-
-Installation complete!
+                     Engineering Intelligence Core
+                                │
+                     ┌──────────┴──────────┐
+                     │   EI Core Engine    │
+                     └──────────┬──────────┘
+                                │ Standard EI Interface (Protocol)
+        ┌───────────┬───────────┼───────────┬───────────┐
+        ▼           ▼           ▼           ▼           ▼
+       CLI        Skills      Hooks      ACP/MCP     IDE Rules
+        │           │           │           │           │
+      Codex        AGY        Claude       Zed        Cursor
+      Aider       Cline      OpenCode     Kilo        Copilot
+      Gemini      Kilo                  OpenHands    Windsurf
+                                          Devin       Augment
+                                                       Junie
 ```
 
 ---
 
-## Manual Installation by Platform
+## 2026 Coding Agent Priority Matrix
 
-If you prefer to configure your environments manually or need project-specific isolation, follow the instructions below.
-
----
-
-### 1. Claude Code
-
-Claude Code supports custom skills located in user-level or project-level skill directories.
-
-#### Project-Level Setup:
-From your repository root:
-```bash
-mkdir -p .claude/skills/engineering-intelligence
-cp SKILL.md .claude/skills/engineering-intelligence/SKILL.md
-```
-
-#### Global Setup:
-```bash
-mkdir -p ~/.claude/skills/engineering-intelligence
-cp SKILL.md ~/.claude/skills/engineering-intelligence/SKILL.md
-```
-
-Once installed, reload Claude Code. You can invoke commands directly as:
-```text
-/review
-/simplify
-/impact
-/audit
-/ship
-```
+| Priority | Agent | Category | Protocol Channels | Key Artifacts & Discovery |
+| :--- | :--- | :--- | :--- | :--- |
+| **P0** | **Antigravity CLI (AGY)** | Terminal / CLI | `skills`, `hooks` | Continuous reference implementation; `.agents/hooks.json` on `PostToolUse` and `Stop`; native `.agents/skills/`. |
+| **P0** | **Claude Code** | Terminal / CLI | `skills` | Discovered via `.claude/skills/engineering-intelligence/SKILL.md`; native slash commands. |
+| **P0** | **OpenAI Codex CLI** | Terminal / CLI | `cli`, `ide_rules` | `codex.json` and persistent `.github/copilot-instructions.md`. |
+| **P0** | **OpenCode** | Terminal / CLI | `skills`, `cli` | `plugin.json` and `.opencode/skills/`. |
+| **P1** | **Cline** | IDE / Editor | `skills`, `ide_rules` | 5M+ installs, 60K+ stars; `.cline/skills/` and `.clinerules`. |
+| **P1** | **Kilo Code / CLI** | IDE & Terminal | `skills`, `cli`, `acp_mcp` | Spans VS Code, JetBrains, and terminal; `.kilo/mcp.json`. |
+| **P1** | **Cursor** | IDE / Editor | `ide_rules`, `acp_mcp` | `.cursor/rules/engineering-intelligence.mdc` and `.cursorrules`. |
+| **P1** | **Gemini CLI** | Terminal / CLI | `cli` | Local repository grounding via `.gemini/context.md`. |
+| **P1** | **Zed** | IDE / Editor | `skills`, `acp_mcp` | Agent Client Protocol (ACP) interoperability and `.zed/skills/`. |
+| **P2** | **Aider** | Terminal / CLI | `cli` | Auto-lints via `.aider.conf.yml` (`ei detect --changed` on edit). |
+| **P2** | **GitHub Copilot** | IDE / Editor | `ide_rules` | Enterprise directives via `.github/copilot-instructions.md`. |
+| **P2** | **Augment Code** | IDE / Editor | `ide_rules` | Enterprise monorepo intelligence via `.augment/instructions.md`. |
+| **P2** | **Windsurf / Devin Desktop** | IDE / Editor | `ide_rules` | Persistent workspace rules via `.windsurfrules`. |
+| **P2** | **JetBrains Junie** | IDE / Editor | `ide_rules` | Guidelines in `.junie/guidelines.md`. |
+| **P3** | **OpenHands** | Autonomous / Cloud | `acp_mcp`, `cli` | Autonomous container integration via `.openhands/mcp.json`. |
+| **P3** | **Devin (Cloud)** | Autonomous / Cloud | `acp_mcp`, `ide_rules` | Cloud sandbox execution instructions via `.devin/instructions.md`. |
 
 ---
 
-### 2. Cursor
+## One-Command Provider Synchronization
 
-Cursor utilizes `.cursor/rules` to govern agent reasoning across a workspace.
-
-#### Setup:
-1. Create a rule file in your project:
-   ```bash
-   mkdir -p .cursor/rules
-   ```
-2. Create `.cursor/rules/engineering-intelligence.mdc`:
-   ```markdown
-   ---
-   description: Senior Engineering Intelligence reasoning layer and anti-slop rules
-   globs: *
-   ---
-
-   # Engineering Intelligence Active Rules
-
-   Always load and respect .ei/context.md and .ei/architecture.md if present.
-   Enforce the Anti-Slop Specification:
-   - Reject single-implementation interfaces.
-   - Disallow gratuitous wrapper functions.
-   - Delete echo comments that restate code.
-   - Follow importance over cosmetic polish.
-   ```
-3. Copy command instructions into your Cursor prompts or agent commands.
-
----
-
-### 3. Google Antigravity / Gemini CLI
-
-Google Antigravity natively loads skills containing a `SKILL.md` file.
-
-#### Project Setup:
-```bash
-mkdir -p .agents/skills/engineering-intelligence
-cp SKILL.md .agents/skills/engineering-intelligence/SKILL.md
-```
-
-#### Global Setup:
-```bash
-mkdir -p ~/.gemini/config/skills/engineering-intelligence
-cp SKILL.md ~/.gemini/config/skills/engineering-intelligence/SKILL.md
-```
-
-Antigravity will automatically index the skill and provide the full command suite.
-
----
-
-### 4. GitHub Copilot & Codex
-
-For GitHub Copilot Workspace and Codex CLI, add the core reasoning directives to your repository's custom instructions:
+You can generate, update, or install provider configurations across all supported agents simultaneously:
 
 ```bash
-mkdir -p .github
-```
+# Inspect all 16 supported agents and priority tiers
+ei providers
 
-Create or append to `.github/copilot-instructions.md`:
-```markdown
-# Engineering Intelligence Instructions
+# Generate all 16 provider configurations into providers/
+ei sync-providers
 
-Before implementing solutions:
-1. Consult .ei/architecture.md and .ei/conventions.md.
-2. Formulate the smallest coherent solution.
-3. Eliminate unnecessary abstractions and boilerplate (Anti-Slop).
-4. Verify blast radius before altering shared data structures or APIs.
+# Synchronize only high-priority tiers
+ei sync-providers --tier P0,P1
+
+# Install directly into current workspace (.agents/, .claude/, .github/, .cursor/, .zed/, etc.)
+ei sync-providers --install
 ```
 
 ---
 
-### 5. OpenCode & Windsurf
+## Universal MCP & ACP Server (`ei mcp`)
 
-In OpenCode or Windsurf, include the root `SKILL.md` inside your agent's system prompt or global knowledge directory (`~/.opencode/skills/engineering-intelligence/SKILL.md`).
+Engineering Intelligence includes a built-in JSON-RPC stdio **Model Context Protocol (MCP)** and **Agent Client Protocol (ACP)** server. This allows any modern agent (Zed, Kilo, Devin, OpenHands, Claude Desktop) to invoke Engineering Intelligence directly as native tools:
+
+### Zed Configuration (`.zed/settings.json`)
+```json
+{
+  "context_servers": {
+    "engineering-intelligence": {
+      "command": "ei",
+      "args": ["mcp"],
+      "settings": {
+        "enforceBlockers": true
+      }
+    }
+  }
+}
+```
+
+### Kilo Code Configuration (`.kilo/mcp.json`)
+```json
+{
+  "mcpServers": {
+    "engineering-intelligence": {
+      "command": "ei",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+### Available MCP Tools
+- **`ei_detect`**: Run deterministic quality control detectors on codebase files, reporting exact lines, evidence, and SHA-256 evidence hashes.
+- **`ei_review`**: Generate structured discipline finding matrix and derived terminal disposition (`BLOCK`, `FIX`, `REVIEW`, `IGNORE`, `SHIP`). Enforces `UNKNOWN != PASS`.
+- **`ei_simplify`**: Run 8-step anti-entropy simplification analysis.
+- **`ei_impact`**: Trace call graph blast radius across APIs, database schemas, and background jobs.
+- **`ei_ship`**: Run 10-point release gate verification before merging.
 
 ---
 
-## Verifying Your Installation
+## Platform Details by Provider
 
-To confirm that Engineering Intelligence is active in any agent:
+### 1. Antigravity CLI (AGY) [P0 - Reference Integration]
+- **Location:** `.agents/skills/engineering-intelligence/SKILL.md` (or `~/.gemini/config/skills/`).
+- **Hooks (`.agents/hooks.json`):**
+  - `PostToolUse` on `write_to_file` & `replace_file_content` ➔ runs `ei detect --changed`.
+  - `Stop` hook ➔ runs `ei review` to ensure zero blockers before turn completion.
+- **Fallback:** When hooks or CLI are absent, operates statically via manual CLI execution.
 
-1. Open a workspace and send:
-   ```text
-   /ei:init
-   ```
-2. The agent should respond by scanning the repository and offering to generate the `.ei/` context suite.
-3. Test a review command:
-   ```text
-   /ei:review
-   ```
-4. The agent should perform an evidence-based review adhering to the standardized finding format.
+### 2. Claude Code [P0]
+- **Location:** `.claude/skills/engineering-intelligence/SKILL.md` (or `~/.claude/skills/`).
+- **Commands:** `/review`, `/simplify`, `/impact`, `/ship`, `/detect`.
+
+### 3. Cline [P1]
+- **Location:** `.cline/skills/engineering-intelligence/SKILL.md` and `.clinerules`.
+- **Enforcement:** `.clinerules` mandates grounding in `.ei/PROJECT.md` and running `ei detect --changed`.
+
+### 4. Zed [P1]
+- **Location:** `.zed/skills/engineering-intelligence/SKILL.md` and `.zed/settings.json`.
+- **Protocol:** Connects via Agent Client Protocol (ACP) and Model Context Protocol (MCP) to `ei mcp`.
+
+### 5. Aider [P2]
+- **Configuration:** `.aider.conf.yml`.
+- **Auto-linting:** Automatically runs `ei detect --changed` on every edit and `ei review` on test runs.

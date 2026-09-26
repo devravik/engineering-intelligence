@@ -1,19 +1,19 @@
-# Claude Code Provider Integration
+# GitHub Copilot Provider Integration
 
-**Category:** TERMINAL | **Tier:** P0
+**Category:** IDE | **Tier:** P2
 
-Terminal coding agent from Anthropic supporting slash commands and progressive skills.
+GitHub Copilot Workspace and IDE assistant directed via repository instructions.
 
 ---
 
 ## Ecosystem Notes
-Industry benchmark for CLI agent workflows.
+Ubiquitous enterprise presence.
 
 ## Supported Protocol Channels
-- **skills**
+- **ide_rules**
 
 ## Discovery & Configuration Paths
-- **skills**: `.claude/skills/engineering-intelligence/SKILL.md`
+- **rules**: `.github/copilot-instructions.md`
 
 ---
 

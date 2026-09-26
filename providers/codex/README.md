@@ -1,19 +1,21 @@
-# Claude Code Provider Integration
+# OpenAI Codex CLI Provider Integration
 
 **Category:** TERMINAL | **Tier:** P0
 
-Terminal coding agent from Anthropic supporting slash commands and progressive skills.
+OpenAI command-line agent enforcing engineering boundaries via directives and context files.
 
 ---
 
 ## Ecosystem Notes
-Industry benchmark for CLI agent workflows.
+Pioneer of the LLM coding agent interface.
 
 ## Supported Protocol Channels
-- **skills**
+- **cli**
+- **ide_rules**
 
 ## Discovery & Configuration Paths
-- **skills**: `.claude/skills/engineering-intelligence/SKILL.md`
+- **config**: `codex.json`
+- **rules**: `.github/copilot-instructions.md`
 
 ---
 

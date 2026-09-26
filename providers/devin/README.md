@@ -1,19 +1,21 @@
-# Claude Code Provider Integration
+# Devin (Cloud) Provider Integration
 
-**Category:** TERMINAL | **Tier:** P0
+**Category:** AUTONOMOUS | **Tier:** P3
 
-Terminal coding agent from Anthropic supporting slash commands and progressive skills.
+Autonomous cloud software engineer with end-to-end sandbox execution and verification.
 
 ---
 
 ## Ecosystem Notes
-Industry benchmark for CLI agent workflows.
+Leading cloud autonomous agent platform.
 
 ## Supported Protocol Channels
-- **skills**
+- **acp_mcp**
+- **ide_rules**
 
 ## Discovery & Configuration Paths
-- **skills**: `.claude/skills/engineering-intelligence/SKILL.md`
+- **rules**: `.devin/instructions.md`
+- **mcp**: `.devin/mcp.json`
 
 ---
 

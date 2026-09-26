@@ -1,19 +1,19 @@
-# Claude Code Provider Integration
+# Windsurf / Devin Desktop Provider Integration
 
-**Category:** TERMINAL | **Tier:** P0
+**Category:** IDE | **Tier:** P2
 
-Terminal coding agent from Anthropic supporting slash commands and progressive skills.
+AI-native IDE in the Devin lineage utilizing cascade flows and persistent workspace rules.
 
 ---
 
 ## Ecosystem Notes
-Industry benchmark for CLI agent workflows.
+Rebranded lineage (Windsurf / Devin Desktop).
 
 ## Supported Protocol Channels
-- **skills**
+- **ide_rules**
 
 ## Discovery & Configuration Paths
-- **skills**: `.claude/skills/engineering-intelligence/SKILL.md`
+- **rules**: `.windsurfrules`
 
 ---
 

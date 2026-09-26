@@ -219,15 +219,54 @@ async function main() {
 
     case 'sync-providers': {
       const installToWorkspace = args.includes('--install');
+      const priorityIdx = args.indexOf('--priority') !== -1 ? args.indexOf('--priority') : args.indexOf('--tier');
+      const priorityFilter = priorityIdx !== -1 ? args[priorityIdx + 1]?.split(',') : undefined;
+      const providerIdx = args.indexOf('--provider');
+      const providerFilter = providerIdx !== -1 ? args[providerIdx + 1]?.split(',') : undefined;
+
       console.log('Synchronizing provider configurations from canonical core...');
-      const { providersUpdated } = syncProviders({ repoRoot, installToWorkspace });
+      const { providersUpdated } = syncProviders({
+        repoRoot,
+        installToWorkspace,
+        priorityFilter,
+        providerFilter
+      });
       for (const p of providersUpdated) {
         console.log(`✓ Synchronized ${p}`);
       }
       if (installToWorkspace) {
-        console.log('✓ Installed rules to local workspace (.claude/, .cursor/, .agents/)');
+        console.log('✓ Installed rules to local workspace (.agents/, .claude/, .github/, .cursor/, .zed/, etc.)');
       }
-      console.log('\nAll providers in sync with active detector catalog.');
+      console.log(`\nAll ${providersUpdated.length} targeted providers in sync with active detector catalog.`);
+      break;
+    }
+
+    case 'providers': {
+      const { ALL_PROVIDERS } = await import('../protocol/index.js');
+      console.log('\n================================================================');
+      console.log('            ENGINEERING INTELLIGENCE PROVIDER MATRIX            ');
+      console.log('================================================================\n');
+
+      for (const tier of ['P0', 'P1', 'P2', 'P3'] as const) {
+        const inTier = ALL_PROVIDERS.filter(p => p.priority === tier);
+        console.log(`[Tier ${tier}]`);
+        for (const p of inTier) {
+          const channels = p.channels.join(', ');
+          console.log(`  • ${p.name.padEnd(26)} | ${p.category.padEnd(10)} | Channels: [${channels}]`);
+        }
+        console.log('');
+      }
+
+      console.log('Total Supported Coding Agents: ' + ALL_PROVIDERS.length);
+      console.log('Run `ei sync-providers` to generate provider artifacts.');
+      console.log('Run `ei mcp` to start stdio Agent Client Protocol / Model Context Protocol server.');
+      console.log('================================================================\n');
+      break;
+    }
+
+    case 'mcp': {
+      const { startMcpServer } = await import('../protocol/mcp-server.js');
+      startMcpServer(repoRoot);
       break;
     }
 
@@ -244,10 +283,13 @@ Commands:
   ei ship                          Verify 10-point release gate
   ei baseline [create|show]        Manage known legacy baseline
   ei ignores [list|add-rule]       Manage rule & file waivers with reasons
-  ei sync-providers [--install]    Synchronize provider adapters (Claude, Cursor, Codex, OpenCode)
+  ei providers                     List all 16 supported coding agents & priority tiers
+  ei sync-providers [--install]    Synchronize provider artifacts across P0-P3 tiers
+  ei mcp                           Start stdio Agent Client Protocol (ACP) & MCP server
 `);
   }
 }
+
 
 main().catch(err => {
   console.error('Fatal CLI Error:', err);

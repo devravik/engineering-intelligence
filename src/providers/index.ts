@@ -4,6 +4,7 @@ import { ClaudeProviderAdapter } from './adapters/claude.js';
 import { CodexProviderAdapter } from './adapters/codex.js';
 
 export * from './types.js';
+export * from '../protocol/index.js';
 export { AgyProviderAdapter } from './adapters/agy.js';
 export { ClaudeProviderAdapter } from './adapters/claude.js';
 export { CodexProviderAdapter } from './adapters/codex.js';
@@ -39,7 +40,10 @@ export function installProvider(
 ): ProviderInstallResult {
   const provider = getProvider(providerId);
   if (!provider) {
-    throw new Error(`Unsupported provider: '${providerId}'. Supported providers: agy, claude, codex.`);
+    throw new Error(
+      `Unsupported direct adapter for '${providerId}'. Use \`ei sync-providers\` to generate artifacts for all 16 providers.`
+    );
   }
   return provider.install(repoRoot, options);
 }
+

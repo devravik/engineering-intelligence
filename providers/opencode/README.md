@@ -1,19 +1,21 @@
-# Claude Code Provider Integration
+# OpenCode Provider Integration
 
 **Category:** TERMINAL | **Tier:** P0
 
-Terminal coding agent from Anthropic supporting slash commands and progressive skills.
+Extensible open-source terminal coding agent with plugin and rule support.
 
 ---
 
 ## Ecosystem Notes
-Industry benchmark for CLI agent workflows.
+Community open-source alternative with high customization.
 
 ## Supported Protocol Channels
 - **skills**
+- **cli**
 
 ## Discovery & Configuration Paths
-- **skills**: `.claude/skills/engineering-intelligence/SKILL.md`
+- **skills**: `.opencode/skills/engineering-intelligence/SKILL.md`
+- **config**: `plugin.json`
 
 ---
 

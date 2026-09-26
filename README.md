@@ -241,62 +241,101 @@ ei ship
 
 ---
 
-## Provider Architecture: AGY + Codex + Claude Code
+## Universal Provider Protocol: 16 Coding Agents Across 3 Surfaces
 
-The Engineering Intelligence core is strictly provider-independent. Provider adapters translate identical capabilities into each agent's native skill, command, context, and hook mechanisms without duplicating the underlying engineering logic.
+Rather than building 16 divergent, hard-coded adapters, Engineering Intelligence is structured around a **Standard Engineering Intelligence Protocol**. 
+
+The core produces a unified quality control engine, which translates through 5 standard archetype drivers:
 
 ```text
-Engineering Intelligence Core
-        │
-        ├── Claude Code
-        ├── Codex
-        ├── Cursor
-        ├── OpenCode
-        ├── Gemini CLI
-        ├── GitHub Copilot
-        └── Antigravity CLI (AGY)
+                     Engineering Intelligence Core
+                                │
+                     ┌──────────┴──────────┐
+                     │   EI Core Engine    │
+                     └──────────┬──────────┘
+                                │ Standard EI Interface (Protocol)
+        ┌───────────┬───────────┼───────────┬───────────┐
+        ▼           ▼           ▼           ▼           ▼
+       CLI        Skills      Hooks      ACP/MCP     IDE Rules
+        │           │           │           │           │
+      Codex        AGY        Claude       Zed        Cursor
+      Aider       Cline      OpenCode     Kilo        Copilot
+      Gemini      Kilo                  OpenHands    Windsurf
+                                          Devin       Augment
+                                                       Junie
 ```
 
 > **Provider support:** Engineering Intelligence must support Antigravity CLI (AGY) as a first-class coding-agent environment alongside Claude Code, Codex, Cursor, OpenCode, Gemini CLI, and GitHub Copilot. Provider adapters must translate the same Engineering Intelligence capabilities into each agent's native skill, command, context, and hook mechanisms without duplicating the underlying engineering logic.
 
-### Initial First-Class Triad
+---
 
-Rather than spreading thin across every agent immediately, Engineering Intelligence establishes full native parity across the initial three integrations: **AGY + Codex + Claude Code**.
+### The 2026 Agent Ecosystem Matrix
 
-#### 1. [Antigravity CLI (AGY)](providers/agy/) Adapter
-Antigravity CLI receives a dedicated, first-class adapter containing:
-* **Skill Installation & Discovery Format:** Progressive disclosure skill discovered natively at `.agents/skills/engineering-intelligence/SKILL.md` (project) or `~/.gemini/config/skills/engineering-intelligence/SKILL.md` (global).
-* **Command Mappings:** Direct routing from AGY slash commands (`/review`, `/simplify`, `/impact`, `/ship`, `/detect`, `/init`, `/baseline`, `/ignores`) to deterministic `ei` subcommands.
-* **Context & Project Initialization:** Dual initialization linking `.ei/` context suite (`PROJECT.md`, `ARCHITECTURE.md`, `CONVENTIONS.md`) with `.agents/rules/engineering-intelligence.md`.
-* **Lifecycle Hook Integration:** Automated triggers in `.agents/hooks.json`:
-  * `PostToolUse` (`replace_file_content`, `write_to_file`) ➔ immediately executes `ei detect --changed` in the background.
-  * `Stop` hook ➔ runs `ei review` before session termination, guaranteeing zero new blockers.
-  * Safe merging algorithm preserves existing user hooks in `hooks.json`.
-* **Agent Invocation Instructions:** Clear directives instructing AGY agents on how to ground in `.ei/`, respond to hook alerts, and maintain the `UNKNOWN != PASS` invariant.
-* **Output & Result Format:** Dual output supporting human-readable Markdown discipline matrices and machine-readable JSON finding schemas with SHA-256 evidence hashes.
-* **Version & Capability Detection:** Active probing of `agy --version`, `.gemini/config`, and `.agents/` capabilities (`supportsSkills`, `supportsHooks`, `supportsRules`, `supportsSlashCommands`).
-* **Safe Fallback:** Graceful fallback to manual CLI verification and static workspace rules whenever AGY CLI binary or hook execution is unavailable.
+Engineering Intelligence classifies and supports the complete modern agent landscape across 4 priority tiers:
 
-#### 2. [Claude Code](providers/claude/) Adapter
-* Discovers `.claude/skills/engineering-intelligence/SKILL.md`.
-* Maps slash commands (`/review`, `/simplify`, `/impact`, `/ship`) and terminal verification before concluding turns.
+| Priority | Coding Agent | Environment | Native Channels | Key Integration Points |
+| :--- | :--- | :--- | :--- | :--- |
+| **P0** | **Antigravity CLI (AGY)** | Terminal / CLI | `skills`, `hooks` | Continuous reference implementation; `.agents/hooks.json` on `PostToolUse` and `Stop`; native `.agents/skills/`. |
+| **P0** | **Claude Code** | Terminal / CLI | `skills` | Discovered via `.claude/skills/`; native slash commands (`/review`, `/simplify`, `/impact`, `/ship`). |
+| **P0** | **OpenAI Codex CLI** | Terminal / CLI | `cli`, `ide_rules` | Terminal directives in `codex.json` and persistent `.github/copilot-instructions.md`. |
+| **P0** | **OpenCode** | Terminal / CLI | `skills`, `cli` | Open-source terminal agent with `plugin.json` and progressive disclosure skills. |
+| **P1** | **Cline** | IDE / Editor | `skills`, `ide_rules` | 5M+ installs, 60K+ stars; `.cline/skills/` specification and `.clinerules`. |
+| **P1** | **Kilo Code / CLI** | IDE & Terminal | `skills`, `cli`, `acp_mcp` | Multi-surface agent spanning VS Code, JetBrains, and terminal with native MCP. |
+| **P1** | **Cursor** | IDE / Editor | `ide_rules`, `acp_mcp` | `.cursor/rules/engineering-intelligence.mdc` and `.cursorrules`. |
+| **P1** | **Gemini CLI** | Terminal / CLI | `cli` | Local repository grounding via `.gemini/context.md`. |
+| **P1** | **Zed** | IDE / Editor | `skills`, `acp_mcp` | Agent Client Protocol (ACP) interoperability and `.zed/skills/`. |
+| **P2** | **Aider** | Terminal / CLI | `cli` | Terminal-native pair programmer; auto-lints via `.aider.conf.yml` on every edit. |
+| **P2** | **GitHub Copilot** | IDE / Editor | `ide_rules` | Enterprise directives via `.github/copilot-instructions.md`. |
+| **P2** | **Augment Code** | IDE / Editor | `ide_rules` | Large-codebase monorepo intelligence via `.augment/instructions.md`. |
+| **P2** | **Windsurf / Devin Desktop** | IDE / Editor | `ide_rules` | Devin Desktop lineage rules via `.windsurfrules`. |
+| **P2** | **JetBrains Junie** | IDE / Editor | `ide_rules` | JetBrains ecosystem guidelines via `.junie/guidelines.md`. |
+| **P3** | **OpenHands** | Autonomous / Cloud | `acp_mcp`, `cli` | Autonomous agent integration via `.openhands/mcp.json`. |
+| **P3** | **Devin (Cloud)** | Autonomous / Cloud | `acp_mcp`, `ide_rules` | Cloud sandbox execution instructions via `.devin/instructions.md`. |
 
-#### 3. [GitHub Copilot & Codex](providers/codex/) Adapter
-* Directs code generation through `.github/copilot-instructions.md`.
-* Enforces deterministic contracts before proposing diffs and requires zero-blocker reviews.
+---
 
-#### 4. Additional Adapters
-* [Cursor](providers/cursor/) (`.cursorrules` / `.mdc`) and [OpenCode](providers/opencode/) (`plugin.json`).
+### Universal Interoperability via MCP & ACP (`ei mcp`)
 
-### Synchronize All Providers
+Engineering Intelligence includes a built-in JSON-RPC stdio **Model Context Protocol (MCP)** and **Agent Client Protocol (ACP)** server. Any agent supporting MCP (such as Zed, Kilo Code, Devin, OpenHands, or Claude Desktop) can connect directly:
+
+```json
+{
+  "context_servers": {
+    "engineering-intelligence": {
+      "command": "ei",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+Exposed MCP Tools:
+- **`ei_detect`**: Runs deterministic detectors on changed files or entire workspace.
+- **`ei_review`**: Evaluates finding matrix and derives mechanical terminal disposition (`BLOCK`, `FIX`, `REVIEW`, `IGNORE`, `SHIP`).
+- **`ei_simplify`**: Executes the 8-step anti-entropy simplification loop.
+- **`ei_impact`**: Traverses call graphs and calculates blast radius for any symbol or file.
+- **`ei_ship`**: Verifies the 10-point production release gate.
+
+---
+
+### Synchronizing Providers
+
+Generate or update configuration artifacts across all 16 providers with a single command:
+
 ```bash
-# Generate and synchronize all provider configurations from canonical core
+# View all supported coding agents and priority tiers
+ei providers
+
+# Synchronize all 16 providers from canonical core
 ei sync-providers
 
-# Install directly into current workspace (.agents/, .claude/, .github/)
-ei sync-providers --install
+# Synchronize only P0 and P1 tier providers
+ei sync-providers --tier P0,P1
 
+# Install directly into current workspace (.agents/, .claude/, .github/, .cursor/, .zed/, etc.)
+ei sync-providers --install
 ```
+
 
 ---
 

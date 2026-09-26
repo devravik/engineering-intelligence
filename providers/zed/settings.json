@@ -1,0 +1,14 @@
+{
+  "context_servers": {
+    "engineering-intelligence": {
+      "command": "ei",
+      "args": [
+        "mcp"
+      ],
+      "settings": {
+        "activeRules": "all",
+        "enforceBlockers": true
+      }
+    }
+  }
+}

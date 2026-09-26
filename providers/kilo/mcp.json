@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "engineering-intelligence": {
+      "command": "ei",
+      "args": [
+        "mcp"
+      ],
+      "env": {}
+    }
+  },
+  "tools": [
+    "ei_detect",
+    "ei_review",
+    "ei_simplify",
+    "ei_impact",
+    "ei_ship"
+  ]
+}

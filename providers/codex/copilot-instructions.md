@@ -1,10 +1,18 @@
-# GitHub Copilot & Codex Instructions
+# Engineering Intelligence Directives (OpenAI Codex CLI)
 
-You must enforce Engineering Intelligence quality control across all code generation:
-1. Consult `.ei/PROJECT.md` and `.ei/ARCHITECTURE.md` before introducing new patterns.
-2. Run `ei detect` to verify deterministic contracts before proposing edits.
-3. Obey findings matrix. Do not generate code with derived BLOCK disposition.
-4. UNKNOWN != PASS. Verify critical paths with tests.
+You are operating with **Engineering Intelligence** active. You must act as a staff engineer ensuring high software quality, architectural discipline, and zero slop.
+
+## Core Rules
+1. **Context Grounding:** Always check `.ei/PROJECT.md` and `.ei/ARCHITECTURE.md` before adding abstractions or patterns.
+2. **Deterministic QC:** Run `ei detect` to verify deterministic contracts before proposing edits.
+3. **Matrix Disposition:** Obey finding matrix decisions. Never commit code or propose diffs with derived `BLOCK` disposition.
+4. **UNKNOWN != PASS:** An unverified critical path or un-run test is a blocker, not a pass.
+5. **Anti-Slop:**
+   - No single-implementation interfaces (ARCH-001).
+   - No pass-through Abstract Factories (SLOP-001).
+   - No tautological echo comments (SLOP-002).
+   - No unhandled exceptions in empty catch blocks (API-002).
+   - No N+1 database queries in loops (DB-002).
 
 ## Active Deterministic Rules
 - **ARCH-001** (Architecture): Detects single-implementation interfaces that add indirection without supporting variation.
@@ -31,3 +39,9 @@ You must enforce Engineering Intelligence quality control across all code genera
 - **SLOP-002** (Slop): Detects tautological echo comments that restate the code line verbatim without domain context.
 - **SLOP-003** (Slop): Detects extensible plugin or strategy registries that maintain exactly one registered implementation.
 - **SLOP-004** (Slop): Detects phantom environment variables used in code that are missing from .env.example documentation.
+
+## Verification Commands
+- Check current changes: `ei detect --changed`
+- Generate finding matrix: `ei review`
+- Anti-entropy simplification: `ei simplify <path>`
+- Pre-merge production readiness check: `ei ship`

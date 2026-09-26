@@ -1,0 +1,9 @@
+# Aider configuration for Engineering Intelligence
+read:
+  - .ei/PROJECT.md
+  - .ei/ARCHITECTURE.md
+  - .ei/CONVENTIONS.md
+
+auto-lint: true
+lint-cmd: ei detect --changed
+test-cmd: ei review

@@ -1,19 +1,19 @@
-# Claude Code Provider Integration
+# JetBrains Junie Provider Integration
 
-**Category:** TERMINAL | **Tier:** P0
+**Category:** IDE | **Tier:** P2
 
-Terminal coding agent from Anthropic supporting slash commands and progressive skills.
+JetBrains autonomous agent for IntelliJ IDEA and JetBrains IDE ecosystem.
 
 ---
 
 ## Ecosystem Notes
-Industry benchmark for CLI agent workflows.
+First-party agent for JVM and JetBrains developers.
 
 ## Supported Protocol Channels
-- **skills**
+- **ide_rules**
 
 ## Discovery & Configuration Paths
-- **skills**: `.claude/skills/engineering-intelligence/SKILL.md`
+- **rules**: `.junie/guidelines.md`
 
 ---
 

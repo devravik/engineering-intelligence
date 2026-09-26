@@ -1,4 +1,21 @@
-export type ProviderId = 'agy' | 'claude' | 'codex' | 'cursor' | 'opencode';
+export type ProviderId =
+  | 'agy'
+  | 'claude'
+  | 'codex'
+  | 'opencode'
+  | 'cline'
+  | 'kilo'
+  | 'cursor'
+  | 'gemini'
+  | 'zed'
+  | 'aider'
+  | 'copilot'
+  | 'augment'
+  | 'windsurf'
+  | 'junie'
+  | 'openhands'
+  | 'devin';
+
 
 export interface ProviderCapabilities {
   providerId: ProviderId;

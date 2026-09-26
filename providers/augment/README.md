@@ -1,19 +1,19 @@
-# Claude Code Provider Integration
+# Augment Code Provider Integration
 
-**Category:** TERMINAL | **Tier:** P0
+**Category:** IDE | **Tier:** P2
 
-Terminal coding agent from Anthropic supporting slash commands and progressive skills.
+Enterprise AI coding assistant designed for large, complex codebases and monorepos.
 
 ---
 
 ## Ecosystem Notes
-Industry benchmark for CLI agent workflows.
+Strong enterprise context-awareness.
 
 ## Supported Protocol Channels
-- **skills**
+- **ide_rules**
 
 ## Discovery & Configuration Paths
-- **skills**: `.claude/skills/engineering-intelligence/SKILL.md`
+- **rules**: `.augment/instructions.md`
 
 ---
 

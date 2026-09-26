@@ -1,19 +1,20 @@
-# Claude Code Provider Integration
+# OpenHands Provider Integration
 
-**Category:** TERMINAL | **Tier:** P0
+**Category:** AUTONOMOUS | **Tier:** P3
 
-Terminal coding agent from Anthropic supporting slash commands and progressive skills.
+Open-source autonomous AI software development agent running in cloud or local containers.
 
 ---
 
 ## Ecosystem Notes
-Industry benchmark for CLI agent workflows.
+Community autonomous benchmark.
 
 ## Supported Protocol Channels
-- **skills**
+- **acp_mcp**
+- **cli**
 
 ## Discovery & Configuration Paths
-- **skills**: `.claude/skills/engineering-intelligence/SKILL.md`
+- **mcp**: `.openhands/mcp.json`
 
 ---
 

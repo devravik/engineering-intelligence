@@ -1,21 +1,15 @@
 ---
 name: engineering-intelligence
-description: Engineering quality control for Claude Code (detect, attribute, prioritize, repair, verify).
+description: Engineering quality control for Claude Code (detect, attribute, prioritize, repair, verify). Enforces deterministic contracts, baseline attribution, and finding matrices.
 ---
 
-# Engineering Intelligence (Claude Code Skill)
-
----
-name: engineering-intelligence
-description: Engineering quality control for AI coding agents (detect, attribute, prioritize, repair, verify). Enforces deterministic contracts, baseline attribution, and finding matrices.
----
-
-# Engineering Intelligence (EI)
+# Engineering Intelligence (Claude Code)
 
 Engineering Intelligence provides **engineering quality control for AI coding agents**.
 
 Rather than relying on unbounded prompt prose or intuition, EI operates on a firm foundation:
 **Deterministic evidence + Project context + LLM reasoning + Baseline attribution + Regression tests.**
+
 
 ---
 
@@ -29,7 +23,7 @@ When modifying, reviewing, or verifying code:
 
 2. Deterministic Detection
    └── Execute `ei detect --changed` (or `ei detect <target>`).
-   └── Obtain exact, machine-verified findings with evidence hashes.
+   └── Obtain exact, machine-verified findings with cryptographic evidence hashes.
 
 3. Baseline Attribution
    └── Distinguish legacy debt (BASELINE) from newly introduced debt (NEW).
@@ -51,22 +45,13 @@ When modifying, reviewing, or verifying code:
 
 ## Command Routing
 
-When the user invokes slash commands or asks for quality control, route directly to the local CLI and reference manuals:
-
-* `/review` (or `ei review`): Generates the structured discipline finding matrix and derived disposition. (See [commands/review.md](../../commands/review.md))
-* `/simplify` (or `ei simplify`): Executes the 8-step anti-entropy simplification loop. (See [commands/simplify.md](../../commands/simplify.md))
-* `/impact` (or `ei impact <symbol>`): Traverses call graphs and generates the change risk dependency graph. (See [commands/impact.md](../../commands/impact.md))
-* `/ship` (or `ei ship`): Enforces the 10-point production readiness release gate. (See [commands/ship.md](../../commands/ship.md))
+* `/review`: Generates structured discipline finding matrix and derived disposition.
+* `/simplify`: Executes the 8-step anti-entropy simplification loop.
+* `/impact <symbol>`: Traverses call graphs and generates the change risk dependency graph.
+* `/ship`: Enforces the 10-point production readiness release gate.
+* `/detect`: Runs 12-discipline deterministic inspection rules.
 
 ---
-
-## Core Invariants
-
-1. **Evidence Before Judgment:** A finding requires physical evidence (file, line, code snippet, evidence hash).
-2. **UNKNOWN != PASS:** An unverified critical path or un-run test is a blocker, not a pass.
-3. **No Unjustified Waivers:** Waivers in `.ei/ignores.json` or inline comments require an explicit `--reason`.
-4. **Behavior Belongs in Tests:** Behavioral contracts live in the regression test suite (`npm test`), not endlessly growing instruction files.
-
 
 ## Active Deterministic Rules
 - **ARCH-001** (Architecture): Detects single-implementation interfaces that add indirection without supporting variation.
@@ -93,3 +78,12 @@ When the user invokes slash commands or asks for quality control, route directly
 - **SLOP-002** (Slop): Detects tautological echo comments that restate the code line verbatim without domain context.
 - **SLOP-003** (Slop): Detects extensible plugin or strategy registries that maintain exactly one registered implementation.
 - **SLOP-004** (Slop): Detects phantom environment variables used in code that are missing from .env.example documentation.
+
+---
+
+## Core Invariants
+
+1. **Evidence Before Judgment:** A finding requires physical evidence (file, line, code snippet, evidence hash).
+2. **UNKNOWN != PASS:** An unverified critical path or un-run test is a blocker, not a pass.
+3. **No Unjustified Waivers:** Waivers in `.ei/ignores.json` or inline comments require an explicit `--reason`.
+4. **Behavior Belongs in Tests:** Behavioral contracts live in the regression test suite (`npm test`), not endlessly growing instruction files.

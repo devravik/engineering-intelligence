@@ -1,5 +1,5 @@
 {
-  "provider": "OpenCode",
+  "provider": "OpenAI Codex CLI",
   "qualityEngine": "Engineering Intelligence",
   "checkCommand": "ei detect --changed",
   "reviewCommand": "ei review",

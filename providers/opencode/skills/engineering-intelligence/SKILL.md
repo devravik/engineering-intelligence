@@ -1,9 +1,9 @@
 ---
 name: engineering-intelligence
-description: Engineering quality control for Antigravity CLI (AGY) (detect, attribute, prioritize, repair, verify). Enforces deterministic contracts, baseline attribution, and finding matrices.
+description: Engineering quality control for OpenCode (detect, attribute, prioritize, repair, verify). Enforces deterministic contracts, baseline attribution, and finding matrices.
 ---
 
-# Engineering Intelligence (Antigravity CLI (AGY))
+# Engineering Intelligence (OpenCode)
 
 Engineering Intelligence provides **engineering quality control for AI coding agents**.
 

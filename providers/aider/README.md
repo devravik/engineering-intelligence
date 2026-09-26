@@ -1,19 +1,19 @@
-# Claude Code Provider Integration
+# Aider Provider Integration
 
-**Category:** TERMINAL | **Tier:** P0
+**Category:** TERMINAL | **Tier:** P2
 
-Terminal coding agent from Anthropic supporting slash commands and progressive skills.
+Pioneering terminal pair programmer with git integration and lint-on-edit capabilities.
 
 ---
 
 ## Ecosystem Notes
-Industry benchmark for CLI agent workflows.
+Long-standing, loyal terminal developer following.
 
 ## Supported Protocol Channels
-- **skills**
+- **cli**
 
 ## Discovery & Configuration Paths
-- **skills**: `.claude/skills/engineering-intelligence/SKILL.md`
+- **config**: `.aider.conf.yml`
 
 ---
 
