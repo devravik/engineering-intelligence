@@ -10,6 +10,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "build": "tsc",
+    "package:skill": "mkdir -p dist && (cd skills/engineering-intelligence && zip -r ../../dist/engineering-intelligence-skill.zip .)",
     "ei": "tsx src/cli/index.ts",
     "detect": "tsx src/cli/index.ts detect",
     "test": "tsx --test tests/*/*.test.ts",
