@@ -61,11 +61,11 @@ Applies restraint doctrine (3+ uses threshold) to recommend tokens to tokenize a
 
 ## 3. Distribution & Management Commands
 
-### `ei install` (or `npx engineering-intelligence install`)
+### `ei install` (or `npx @devravik/engineering-intelligence install`)
 Detects local and system coding agent harnesses (AGY, Claude, Codex, Cursor, etc.) and provisions skills, hooks, and rules.
 
-### `ei update` (or `npx engineering-intelligence update`)
+### `ei update` (or `npx @devravik/engineering-intelligence update`)
 Updates installed provider skills and rules from canonical core.
 
-### `ei doctor` (or `npx engineering-intelligence doctor`)
+### `ei doctor` (or `npx @devravik/engineering-intelligence doctor`)
 Audits installed harnesses, engine capabilities, lifecycle hooks, and project context.

@@ -27,7 +27,7 @@ const repoRoot = resolve(process.cwd());
 
 test('ARCH-001: detects single-implementation interface', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/architecture/unnecessary-abstraction.ts',
+    targetSubpath: 'fixtures/detectors/architecture/unnecessary-abstraction.ts',
     detectors: [arch001]
   });
 
@@ -39,7 +39,7 @@ test('ARCH-001: detects single-implementation interface', async () => {
 
 test('ARCH-002: detects duplicated responsibility across classes', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/architecture/duplicated-responsibility.ts',
+    targetSubpath: 'fixtures/detectors/architecture/duplicated-responsibility.ts',
     detectors: [arch002]
   });
 
@@ -51,7 +51,7 @@ test('ARCH-002: detects duplicated responsibility across classes', async () => {
 
 test('ARCH-004: detects direct database access in UI client component', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/architecture/boundary-violation.tsx',
+    targetSubpath: 'fixtures/detectors/architecture/boundary-violation.tsx',
     detectors: [arch004]
   });
 
@@ -63,7 +63,7 @@ test('ARCH-004: detects direct database access in UI client component', async ()
 
 test('CODE-003: detects excessive indirection and pass-through functions', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/code-quality/pass-through-indirection.ts',
+    targetSubpath: 'fixtures/detectors/code-quality/pass-through-indirection.ts',
     detectors: [code003]
   });
 
@@ -74,7 +74,7 @@ test('CODE-003: detects excessive indirection and pass-through functions', async
 
 test('DB-001: detects missing database index on foreign key column', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/database/unindexed-fk.sql',
+    targetSubpath: 'fixtures/detectors/database/unindexed-fk.sql',
     detectors: [db001]
   });
 
@@ -86,7 +86,7 @@ test('DB-001: detects missing database index on foreign key column', async () =>
 
 test('DB-003: detects unsafe migration adding NOT NULL without DEFAULT', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/database/unsafe-migration.sql',
+    targetSubpath: 'fixtures/detectors/database/unsafe-migration.sql',
     detectors: [db003]
   });
 
@@ -98,7 +98,7 @@ test('DB-003: detects unsafe migration adding NOT NULL without DEFAULT', async (
 
 test('DB-002: detects N+1 database queries in loop', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/database/n-plus-one.ts',
+    targetSubpath: 'fixtures/detectors/database/n-plus-one.ts',
     detectors: [db002]
   });
 
@@ -109,7 +109,7 @@ test('DB-002: detects N+1 database queries in loop', async () => {
 
 test('API-001: detects missing authorization guard on mutating handler', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/security/missing-auth-route.ts',
+    targetSubpath: 'fixtures/detectors/security/missing-auth-route.ts',
     detectors: [api001]
   });
 
@@ -121,7 +121,7 @@ test('API-001: detects missing authorization guard on mutating handler', async (
 
 test('TEST-002: detects weak tautological assertions', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/testing/weak-assertion.test.ts',
+    targetSubpath: 'fixtures/detectors/testing/weak-assertion.test.ts',
     detectors: [test002]
   });
 
@@ -132,7 +132,7 @@ test('TEST-002: detects weak tautological assertions', async () => {
 
 test('SLOP-001: detects speculative pass-through factory', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/slop/generic-factory.ts',
+    targetSubpath: 'fixtures/detectors/slop/generic-factory.ts',
     detectors: [slop001]
   });
 
@@ -143,7 +143,7 @@ test('SLOP-001: detects speculative pass-through factory', async () => {
 
 test('SLOP-002: detects tautological echo comments', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/slop/echo-comments.ts',
+    targetSubpath: 'fixtures/detectors/slop/echo-comments.ts',
     detectors: [slop002]
   });
 
@@ -153,7 +153,7 @@ test('SLOP-002: detects tautological echo comments', async () => {
 
 test('SLOP-003: detects speculative plugin registries with 1 registration', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/slop/speculative-registry.ts',
+    targetSubpath: 'fixtures/detectors/slop/speculative-registry.ts',
     detectors: [slop003]
   });
 
@@ -165,7 +165,7 @@ test('SLOP-003: detects speculative plugin registries with 1 registration', asyn
 test('SARIF: exports valid SARIF v2.1.0 schema with rule annotations', async () => {
   const { formatSarif } = await import('../../src/detectors/sarif.js');
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/architecture/unnecessary-abstraction.ts',
+    targetSubpath: 'fixtures/detectors/architecture/unnecessary-abstraction.ts',
     detectors: [arch001]
   });
 
@@ -188,7 +188,7 @@ test('Custom Rules: loads declarative rules from .ei/rules/', async () => {
 test('SEC-001: detects hardcoded secrets and live API credentials', async () => {
   const { writeFileSync, mkdirSync } = await import('node:fs');
   const { join } = await import('node:path');
-  const fixtureDir = join(repoRoot, 'fixtures', 'security');
+  const fixtureDir = join(repoRoot, 'fixtures', 'detectors', 'security');
   mkdirSync(fixtureDir, { recursive: true });
   // Construct dummy live Stripe key at runtime so raw secret is not committed in git
   const stripeKey = ['sk', 'live', '51OzK92F8q1N7vL3mX8jK2p4Rw9T1aB'].join('_');
@@ -198,7 +198,7 @@ test('SEC-001: detects hardcoded secrets and live API credentials', async () => 
   );
 
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/security/hardcoded-secret.ts',
+    targetSubpath: 'fixtures/detectors/security/hardcoded-secret.ts',
     detectors: [sec001]
   });
 
@@ -211,7 +211,7 @@ test('SEC-001: detects hardcoded secrets and live API credentials', async () => 
 
 test('SEC-002: detects unsanitized raw SQL query string interpolation', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/security/sql-injection.ts',
+    targetSubpath: 'fixtures/detectors/security/sql-injection.ts',
     detectors: [sec002]
   });
 
@@ -224,7 +224,7 @@ test('SEC-002: detects unsanitized raw SQL query string interpolation', async ()
 
 test('ARCH-005: detects module-level shared mutable state in server routes', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/architecture/routes/shared-mutable-route.ts',
+    targetSubpath: 'fixtures/detectors/architecture/routes/shared-mutable-route.ts',
     detectors: [arch005]
   });
 
@@ -236,7 +236,7 @@ test('ARCH-005: detects module-level shared mutable state in server routes', asy
 
 test('DB-005: detects sequential multi-table mutations lacking transaction boundary', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/database/multi-mutation-no-tx.ts',
+    targetSubpath: 'fixtures/detectors/database/multi-mutation-no-tx.ts',
     detectors: [db005]
   });
 
@@ -248,7 +248,7 @@ test('DB-005: detects sequential multi-table mutations lacking transaction bound
 
 test('API-005: detects unbounded HTTP request lacking timeout or AbortSignal', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/api/unbounded-http.ts',
+    targetSubpath: 'fixtures/detectors/api/unbounded-http.ts',
     detectors: [api005]
   });
 
@@ -260,7 +260,7 @@ test('API-005: detects unbounded HTTP request lacking timeout or AbortSignal', a
 
 test('CODE-006: detects TypeScript compiler suppression directive and any casts', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/code-quality/type-bypass.ts',
+    targetSubpath: 'fixtures/detectors/code-quality/type-bypass.ts',
     detectors: [code006]
   });
 
@@ -271,7 +271,7 @@ test('CODE-006: detects TypeScript compiler suppression directive and any casts'
 
 test('CODE-007: detects floating unawaited promises in mutating handlers', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/code-quality/floating-promise.ts',
+    targetSubpath: 'fixtures/detectors/code-quality/floating-promise.ts',
     detectors: [code007]
   });
 
@@ -283,7 +283,7 @@ test('CODE-007: detects floating unawaited promises in mutating handlers', async
 
 test('TEST-004: detects and distinguishes committed focused and skipped test cases', async () => {
   const result = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/testing/skipped-test.test.ts',
+    targetSubpath: 'fixtures/detectors/testing/skipped-test.test.ts',
     detectors: [test004]
   });
 
@@ -300,7 +300,7 @@ test('TEST-004: detects and distinguishes committed focused and skipped test cas
 
 test('False-Positive Trap: SEC-001 & SEC-002 ignore placeholders and benign numeric SQL interpolation', async () => {
   const secResult = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/security/benign-secrets-and-sql.ts',
+    targetSubpath: 'fixtures/detectors/security/benign-secrets-and-sql.ts',
     detectors: [sec001, sec002]
   });
 
@@ -309,7 +309,7 @@ test('False-Positive Trap: SEC-001 & SEC-002 ignore placeholders and benign nume
 
 test('False-Positive Trap: ARCH-005 ignores legitimate memoization caches, metrics, and init locks', async () => {
   const archResult = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/architecture/routes/legitimate-cache-route.ts',
+    targetSubpath: 'fixtures/detectors/architecture/routes/legitimate-cache-route.ts',
     detectors: [arch005]
   });
 
@@ -318,7 +318,7 @@ test('False-Positive Trap: ARCH-005 ignores legitimate memoization caches, metri
 
 test('False-Positive Trap: CODE-007 ignores synchronous calls and handled .catch() promise chains', async () => {
   const codeResult = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/code-quality/handled-async-and-sync.ts',
+    targetSubpath: 'fixtures/detectors/code-quality/handled-async-and-sync.ts',
     detectors: [code007]
   });
 
@@ -327,7 +327,7 @@ test('False-Positive Trap: CODE-007 ignores synchronous calls and handled .catch
 
 test('False-Positive Trap: ARCH-001 restraint doctrine respects intentional dependency inversion interfaces', async () => {
   const ifaceResult = await runDetectors(repoRoot, {
-    targetSubpath: 'fixtures/architecture/architectural-boundary.ts',
+    targetSubpath: 'fixtures/detectors/architecture/architectural-boundary.ts',
     detectors: [arch001]
   });
 

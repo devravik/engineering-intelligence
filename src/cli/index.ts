@@ -28,6 +28,21 @@ async function main() {
   const command = args[0] || 'help';
   const repoRoot = process.cwd();
 
+  if (args.includes('--version') || args.includes('-v') || command === 'version') {
+    try {
+      const { fileURLToPath } = await import('node:url');
+      const { dirname, join } = await import('node:path');
+      const { readFileSync } = await import('node:fs');
+      const __filename = fileURLToPath(import.meta.url);
+      const pkgPath = join(dirname(__filename), '../../package.json');
+      const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
+      console.log(`@devravik/engineering-intelligence v${pkg.version}`);
+    } catch {
+      console.log('@devravik/engineering-intelligence v0.1.2');
+    }
+    return;
+  }
+
   switch (command) {
     case 'init': {
       console.log('Initializing Engineering Intelligence context (.ei/)...');

@@ -55,3 +55,13 @@ test('CLI: ei sync-providers updates provider configurations', () => {
   assert.match(output, /Synchronized Claude Code/);
   assert.match(output, /Synchronized Cursor/);
 });
+
+test('CLI: ei --version reports authentic @devravik/engineering-intelligence provenance', () => {
+  const output = execSync('npx tsx src/cli/index.ts --version', {
+    cwd: repoRoot,
+    encoding: 'utf-8'
+  });
+
+  assert.match(output, /@devravik\/engineering-intelligence v/);
+});
+

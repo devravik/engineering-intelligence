@@ -1,6 +1,6 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { execSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { Detector, DetectorContext, FileEntry, DetectionResult } from './types.js';
 import { RawFinding, Finding, EIFinding } from '../findings/types.js';
 import { FindingNormalizer } from '../findings/normalizer.js';
@@ -98,7 +98,8 @@ export function collectFiles(
 
   if (changedFilesOnly) {
     try {
-      const gitOutput = execSync('git status --porcelain', { cwd: repoRoot, encoding: 'utf-8' });
+      const gitResult = spawnSync('git', ['status', '--porcelain'], { cwd: repoRoot, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] });
+      const gitOutput = gitResult.status === 0 && gitResult.stdout ? gitResult.stdout : '';
       const changedRelPaths = gitOutput
         .split('\n')
         .map(line => line.trim().slice(3))

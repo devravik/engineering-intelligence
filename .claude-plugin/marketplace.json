@@ -12,7 +12,7 @@
     {
       "name": "engineering-intelligence",
       "description": "Review and improve AI-generated software for architecture, security, APIs, databases, testing, complexity, UI quality, and AI slop.",
-      "version": "0.1.0",
+      "version": "0.1.2",
       "author": {
         "name": "Ravi Krishnan Gupta",
         "email": "dev.ravikgupt@gmail.com"

@@ -14,8 +14,11 @@ export const slop003: Detector = {
 
     for (const file of context.files) {
       if (!file.path.endsWith('.ts') && !file.path.endsWith('.js')) continue;
-      if (file.path.includes('/detectors/') || file.path.includes('/tests/') || file.path.includes('node_modules/')) {
-        continue;
+      const isTargetedFixture = Boolean(context.targetPath && file.path.includes(context.targetPath));
+      if (!isTargetedFixture) {
+        if (file.path.includes('src/detectors/') || file.path.includes('/tests/') || file.path.includes('/fixtures/') || file.path.includes('node_modules/')) {
+          continue;
+        }
       }
 
       for (let i = 0; i < file.lines.length; i++) {

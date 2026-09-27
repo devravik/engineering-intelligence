@@ -61,8 +61,8 @@ export const arch005: Detector = {
           lower.includes('/controllers/') ||
           lower.includes('route.ts') ||
           lower.includes('route.js')) &&
-        (isTargetedFixture || (!lower.includes('/tests/') && !lower.includes('/fixtures/'))) &&
-        !lower.includes('/detectors/');
+        (isTargetedFixture || (!lower.includes('/tests/') && !lower.includes('/fixtures/') && !lower.includes('/detectors/'))) &&
+        !lower.includes('src/detectors/');
 
       if (!isServerHandler) continue;
 

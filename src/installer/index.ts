@@ -9,7 +9,7 @@
 
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { execSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import { ALL_PROVIDERS, generateProviderArtifacts, ProviderMetadata } from '../protocol/index.js';
 import { HooksDriver } from '../protocol/drivers/hooks.js';
 import { allDetectors } from '../detectors/index.js';
@@ -90,9 +90,9 @@ export interface DoctorReport {
  */
 function isBinaryAvailable(name: string): boolean {
   try {
-    const cmd = process.platform === 'win32' ? `where ${name}` : `which ${name}`;
-    execSync(cmd, { stdio: ['pipe', 'pipe', 'ignore'], encoding: 'utf-8' });
-    return true;
+    const prog = process.platform === 'win32' ? 'where' : 'which';
+    const res = spawnSync(prog, [name], { stdio: ['pipe', 'pipe', 'ignore'] });
+    return res.status === 0;
   } catch {
     return false;
   }

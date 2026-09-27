@@ -3,5 +3,5 @@ dist/
 *.log
 .DS_Store
 .ei/state/sessions/
-fixtures/security/hardcoded-secret.ts
-
+fixtures/detectors/security/hardcoded-secret.ts
+fixtures/**/hardcoded-secret.ts

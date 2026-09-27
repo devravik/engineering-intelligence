@@ -1,0 +1,6 @@
+version: 2
+# Socket configuration for Engineering Intelligence
+# https://docs.socket.dev/docs/socket-yml
+projectIgnorePaths:
+  - "fixtures/"
+  - "tests/"

@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { execSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import {
   ProviderAdapter,
   ProviderCapabilities,
@@ -18,8 +18,8 @@ export class CodexProviderAdapter implements ProviderAdapter {
     let copilotInstalled = false;
 
     try {
-      execSync('gh copilot --version', { stdio: ['pipe', 'pipe', 'ignore'] });
-      copilotInstalled = true;
+      const res = spawnSync('gh', ['copilot', '--version'], { stdio: ['pipe', 'pipe', 'ignore'] });
+      copilotInstalled = res.status === 0;
     } catch {
       // gh copilot not installed
     }

@@ -32,6 +32,37 @@ Rather than relying on unbounded prompt prose or intuition, EI operates on a fir
 
 ${customHeader ? `${customHeader}\n` : ''}---
 
+## Installation and Trust
+
+Engineering Intelligence uses the \`ei\` CLI from the official \`@devravik/engineering-intelligence\` npm package.
+
+### Installation
+\`\`\`bash
+npm install -g @devravik/engineering-intelligence
+\`\`\`
+
+### Verification
+Verify the installation and binary provenance:
+\`\`\`bash
+ei --version
+which ei
+\`\`\`
+
+The CLI source and release history are maintained in:
+- GitHub Repository: [https://github.com/devravik/engineering-intelligence](https://github.com/devravik/engineering-intelligence)
+- Official npm Package: [https://www.npmjs.com/package/@devravik/engineering-intelligence](https://www.npmjs.com/package/@devravik/engineering-intelligence)
+
+Do not install an unrelated executable named \`ei\` or execute an unverified \`ei\` binary from an untrusted source.
+
+### Self-Verifying CLI Protocol
+Before executing commands, the agent verifies the \`ei\` CLI binary:
+1. Locate \`ei\` using \`which ei\` (or \`where ei\` on Windows).
+2. Verify provenance with \`ei --version\`. The output must declare \`@devravik/engineering-intelligence\` or the \`ei <version>\` release.
+3. If \`ei\` cannot be established as the authentic Engineering Intelligence CLI, stop and prompt the user to install \`@devravik/engineering-intelligence\` (or run securely via \`npx -y @devravik/engineering-intelligence <command>\`).
+4. Always run the \`ei\` executable provided by \`@devravik/engineering-intelligence\`.
+
+---
+
 ## The Seven-Stage Mental Model
 
 When modifying, reviewing, or verifying code, execute these seven cognitive stages in strict sequence:
@@ -39,6 +70,7 @@ When modifying, reviewing, or verifying code, execute these seven cognitive stag
 \`\`\`text
 1. DETECT
    └── Run deterministic rules to gather physical evidence (file, line, snippet, hash).
+       Execute the \`ei\` executable provided by \`@devravik/engineering-intelligence\`: \`ei detect --changed\` (or \`ei detect <target>\`).
        Contract: A finding means EI found concrete evidence matching a rule.
 
 2. NORMALIZE
@@ -122,6 +154,8 @@ When writing or reviewing code, actively challenge these common AI failure modes
 ---
 
 ## Command Routing & Operations
+
+Always run the \`ei\` executable provided by \`@devravik/engineering-intelligence\`:
 
 * \`${cmd('review')}\`: **Diagnostic Evaluation.** Generates discipline finding matrix, physical evidence, baseline attribution, confidence scores, recommendations, and highlighted UNKNOWN areas. Does not act as an aggressive blocker.
 * \`${cmd('ship')}\`: **Terminal Release Gate.** Enforces production readiness preconditions and the strict \`UNKNOWN != PASS\` invariant. Evaluates to \`BLOCK\`, \`FIX\`, or \`SHIP\`.

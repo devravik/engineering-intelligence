@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { execSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import {
   ProviderAdapter,
   ProviderCapabilities,
@@ -20,9 +20,11 @@ export class AgyProviderAdapter implements ProviderAdapter {
     let version: string | undefined;
 
     try {
-      const v = execSync('agy --version', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
-      agyInstalled = true;
-      version = v;
+      const res = spawnSync('agy', ['--version'], { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] });
+      if (res.status === 0 && res.stdout) {
+        agyInstalled = true;
+        version = res.stdout.trim();
+      }
     } catch {
       // AGY CLI binary not found in PATH
     }

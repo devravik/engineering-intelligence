@@ -14,13 +14,16 @@ export const api001: Detector = {
 
     for (const file of context.files) {
       const lowerPath = file.path.toLowerCase();
-      if (
-        lowerPath.includes('/detectors/') ||
-        lowerPath.includes('/tests/') ||
-        lowerPath.includes('/fixtures/') ||
-        lowerPath.includes('node_modules/')
-      ) {
-        continue;
+      const isTargetedFixture = Boolean(context.targetPath && file.path.includes(context.targetPath));
+      if (!isTargetedFixture) {
+        if (
+          lowerPath.includes('src/detectors/') ||
+          lowerPath.includes('/tests/') ||
+          lowerPath.includes('/fixtures/') ||
+          lowerPath.includes('node_modules/')
+        ) {
+          continue;
+        }
       }
 
       const isRouteFile =

@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { execSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import {
   ProviderAdapter,
   ProviderCapabilities,
@@ -19,9 +19,11 @@ export class ClaudeProviderAdapter implements ProviderAdapter {
     let version: string | undefined;
 
     try {
-      const v = execSync('claude --version', { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
-      claudeInstalled = true;
-      version = v;
+      const res = spawnSync('claude', ['--version'], { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] });
+      if (res.status === 0 && res.stdout) {
+        claudeInstalled = true;
+        version = res.stdout.trim();
+      }
     } catch {
       // Claude binary not in PATH
     }

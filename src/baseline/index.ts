@@ -8,7 +8,7 @@ import {
   Attribution
 } from '../findings/types.js';
 import { FindingNormalizer } from '../findings/normalizer.js';
-import { execSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 
 export interface BaselineEntry {
   ruleId: string;
@@ -26,24 +26,27 @@ export interface BaselineState {
   entries: Record<string, BaselineEntry>; // keyed by evidenceHash
 }
 
-export function getGitMergeBase(repoRoot: string, targetRef: string = 'origin/main'): string | null {
+function runGit(repoRoot: string, args: string[]): string | null {
   try {
-    return execSync(`git merge-base ${targetRef} HEAD`, {
+    const result = spawnSync('git', args, {
       cwd: repoRoot,
       encoding: 'utf-8',
       stdio: ['pipe', 'pipe', 'ignore']
-    }).trim();
+    });
+    if (result.status !== 0 || !result.stdout) return null;
+    return result.stdout.trim();
   } catch {
-    try {
-      return execSync('git rev-parse HEAD~1', {
-        cwd: repoRoot,
-        encoding: 'utf-8',
-        stdio: ['pipe', 'pipe', 'ignore']
-      }).trim();
-    } catch {
-      return null;
-    }
+    return null;
   }
+}
+
+export function getGitMergeBase(
+  repoRoot: string,
+  targetRef: string = 'origin/main'
+): string | null {
+  const mergeBase = runGit(repoRoot, ['merge-base', targetRef, 'HEAD']);
+  if (mergeBase) return mergeBase;
+  return runGit(repoRoot, ['rev-parse', 'HEAD~1']);
 }
 
 export function getBaselinePath(repoRoot: string): string {
