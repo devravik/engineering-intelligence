@@ -22,6 +22,42 @@ Engineering Intelligence does not rely on 16 divergent, hand-crafted implementat
 
 ---
 
+## Distribution Strategy
+
+skills.sh is **not** a submission portal. It is an auto-discovery catalogue driven by anonymous installation telemetry:
+
+```text
+GitHub repo (public SKILL.md)
+         │
+         ▼
+  skills.sh catalogue
+  ├── discovery & ranking
+  ├── install count leaderboard
+  └── security audits
+         │
+         ▼
+  npx skills add devravik/engineering-intelligence
+         │
+         ▼
+  Agent harness (Claude Code, Cursor, Windsurf, …)
+```
+
+The first `npx skills add` invocation against the public repo automatically seeds the catalogue. No separate submission step is needed.
+
+### Distribution Tiers (priority order)
+
+| Channel | Mechanism | Action Required |
+| :--- | :--- | :--- |
+| **GitHub** | Public repo + `SKILL.md` | ✅ Done when repo is public |
+| **skills.sh** | Auto-discovered via install telemetry | None — first install seeds catalogue |
+| **Claude Code plugin** | `.claude-plugin/` manifest | Publish to Claude marketplace |
+| **OpenAI plugin** | Plugin portal submission | Submit when portal issue resolved |
+| **Provider-specific** | IDE marketplaces where worthwhile | Evaluate case by case |
+
+> **Note:** skills.sh supports Claude Code, Cursor, and Windsurf natively. A single canonical `SKILL.md` covers all three — no per-agent forks needed.
+
+---
+
 ## 2026 Coding Agent Priority Matrix
 
 | Priority | Agent | Category | Protocol Channels | Key Artifacts & Discovery |

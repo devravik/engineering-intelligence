@@ -1,8 +1,17 @@
 # Engineering Intelligence
 
-Engineering quality control for AI coding agents. 1 canonical skill, 18 commands, live browser iteration, dynamic baseline attribution, and 81 deterministic detector rules (32 code + 49 UI).
+**Engineering quality control for AI coding agents.**
 
-> **Quick start:** From your project root, run `npx @devravik/engineering-intelligence install`, then run `ei init` (or `/ei init`) inside your AI coding tool. Full docs: [github.com/devravik/engineering-intelligence](https://github.com/devravik/engineering-intelligence).
+Detect problems. Understand impact. Simplify changes. Verify the result.
+
+**1 canonical skill · 18 commands · 81 deterministic detectors · live browser verification · dynamic baseline attribution**
+
+[![skills.sh](https://skills.sh/b/devravik/engineering-intelligence)](https://skills.sh/devravik/engineering-intelligence)
+[![GitHub release](https://img.shields.io/github/v/release/devravik/engineering-intelligence)](https://github.com/devravik/engineering-intelligence/releases)
+[![License](https://img.shields.io/github/license/devravik/engineering-intelligence)](https://github.com/devravik/engineering-intelligence)
+[![npm](https://img.shields.io/npm/v/@devravik/engineering-intelligence)](https://www.npmjs.com/package/@devravik/engineering-intelligence)
+
+> **Quick start:** From your project root, run `npx @devravik/engineering-intelligence install`, then run `ei init` (or `/ei init`) inside your AI coding tool. Full docs: [GitHub](https://github.com/devravik/engineering-intelligence).
 
 ---
 
@@ -150,19 +159,21 @@ This auto-detects active harness directories and installed CLIs (such as Antigra
   npx @devravik/engineering-intelligence doctor
   ```
 
-### Option 2: Universal Agent Skills Ecosystem (`npx skills add`)
+### Option 2: skills.sh Ecosystem (`npx skills add`)
 
-For skill-native agents adopting the open Agent Skills standard, install directly from the canonical skill definition without any custom CLI:
+Engineering Intelligence is automatically discoverable through [skills.sh](https://skills.sh/devravik/engineering-intelligence) — no separate submission required. The skills.sh catalogue is seeded by installation telemetry: once the repo is public with a valid `SKILL.md`, the first `npx skills add` invocation registers it.
 
 ```bash
-# Universal skill installation
+# Install from GitHub source (canonical)
 npx skills add https://github.com/devravik/engineering-intelligence --skill engineering-intelligence
 
 # Or via GitHub shorthand:
-npx skills add devravik/engineering-intelligence --skill engineering-intelligence
+npx skills add devravik/engineering-intelligence
 ```
 
-The canonical skill resides in [`skills/engineering-intelligence/SKILL.md`](skills/engineering-intelligence/SKILL.md) with self-contained detector references, commands, anti-slop doctrine, and verification scripts.
+This installs Engineering Intelligence into any skills.sh-compatible agent (Claude Code, Cursor, Windsurf, and others). The canonical skill resides in [`skills/engineering-intelligence/SKILL.md`](skills/engineering-intelligence/SKILL.md) with self-contained detector references, commands, anti-slop doctrine, and verification scripts.
+
+> **Distribution pipeline:** `GitHub repo` → `skills.sh catalogue` (auto-discovered via install telemetry) → `npx skills add` → agent harness. No portal submission or approval step needed.
 
 ### Option 3: Claude Code Marketplace Plugin
 
