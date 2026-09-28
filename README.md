@@ -137,8 +137,9 @@ Don't audit generic code. Catch the specific failure modes AI coding agents intr
 
 ## Use Cases & Discovery
 
-Detailed guides for specific problem domains and agent environments:
+Detailed guides for specific problem domains, agent environments, and engineering workflows:
 
+**Problem Domains**
 | Guide | Description |
 |---|---|
 | [AI-Generated Code Review](docs/use-cases/ai-code-review.md) | Full overview of what Engineering Intelligence detects and how it works |
@@ -146,12 +147,32 @@ Detailed guides for specific problem domains and agent environments:
 | [AI-Agent Security Review](docs/use-cases/ai-agent-security.md) | Missing auth, SQL injection, command injection, secret leakage |
 | [AI-Agent Database Review](docs/use-cases/ai-agent-database-review.md) | N+1 queries, unindexed FKs, destructive migrations, unbounded scans |
 | [AI-Agent Architecture Review](docs/use-cases/ai-agent-architecture-review.md) | Single-use abstractions, God files, circular dependencies, singletons |
+| [AI-Agent Error Handling](docs/use-cases/ai-agent-error-handling.md) | Swallowed exceptions, missing timeouts, unawaited promises |
+| [AI-Agent Testing Review](docs/use-cases/ai-agent-testing-review.md) | Fake assertions, committed `.skip`, zero-assertion test bodies |
 | [AI-Generated UI Review](docs/use-cases/ai-generated-ui.md) | Purple gradients, card-in-card nesting, centering, a11y failures |
+
+**Coding Agent Integrations**
+| Guide | Description |
+|---|---|
 | [Claude Code Quality](docs/use-cases/claude-code-quality.md) | Engineering gate for Claude Code sessions and PostToolUse hooks |
 | [Cursor Code Quality](docs/use-cases/cursor-code-quality.md) | Cursor Composer review and `.cursor/rules/` integration |
 | [Codex & Copilot Quality](docs/use-cases/codex-code-quality.md) | GitHub Actions CI gate and `copilot-instructions.md` setup |
+| [OpenCode Code Quality](docs/use-cases/opencode-code-quality.md) | Terminal agent skill for OpenCode sessions |
+| [Windsurf Code Quality](docs/use-cases/windsurf-code-quality.md) | Cascade agent `.windsurfrules` quality directives |
+| [Cline Code Quality](docs/use-cases/cline-code-quality.md) | VS Code autonomous agent `.clinerules` verification |
+
+**Workflows & Frameworks**
+| Guide | Description |
+|---|---|
+| [Vibe Coding Quality Control](docs/use-cases/vibe-coding-quality-control.md) | Making vibe-coded software production-safe |
+| [CI/CD Quality Gate](docs/use-cases/ci-cd-quality-gate.md) | GitHub Actions, GitLab CI, pre-push blocking |
+| [Pre-Commit Code Review](docs/use-cases/pre-commit-code-review.md) | Local pre-commit hooks and Husky integration |
+| [Next.js AI Code Quality](docs/use-cases/nextjs-ai-code-quality.md) | Server Actions, App Router, Prisma, Tailwind |
+| [TypeScript AI Code Review](docs/use-cases/typescript-ai-code-review.md) | `as any` casts, `@ts-ignore`, unawaited async |
+| [Static Analysis for AI Agents](docs/use-cases/static-analysis-for-ai-agents.md) | Deterministic vs. LLM-based code review comparison |
 
 ---
+
 
 ## Built for Every Major Agent Ecosystem
 
