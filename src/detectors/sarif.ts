@@ -63,7 +63,7 @@ export function formatSarif(result: DetectionResult): string {
         tool: {
           driver: {
             name: 'Engineering Intelligence',
-            version: '0.1.2',
+            version: '0.1.3',
             informationUri: 'https://github.com/devravik/engineering-intelligence',
             rules: Array.from(rulesMap.values())
           }

@@ -46,7 +46,7 @@ export function startMcpServer(repoRoot: string): void {
           },
           serverInfo: {
             name: 'engineering-intelligence',
-            version: '0.1.2'
+            version: '0.1.3'
           }
         });
         return;

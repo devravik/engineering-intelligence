@@ -1,6 +1,6 @@
 {
   "name": "@devravik/engineering-intelligence",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Engineering quality control for AI coding agents: detect, attribute, prioritize, repair, verify.",
   "type": "module",
   "bin": {

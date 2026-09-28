@@ -49,9 +49,36 @@ export class CodexProviderAdapter implements ProviderAdapter {
 
     const content = `# GitHub Copilot & Codex Instructions
 
+## Installation and Trust
+
+Engineering Intelligence uses the \`ei\` CLI from the official \`@devravik/engineering-intelligence\` package.
+
+Official source:
+https://github.com/devravik/engineering-intelligence
+
+Install:
+\`\`\`bash
+npx -y @devravik/engineering-intelligence --version
+\`\`\`
+or install globally:
+\`\`\`bash
+npm install -g @devravik/engineering-intelligence
+\`\`\`
+
+Before relying on the CLI, verify:
+\`\`\`bash
+ei --version
+\`\`\`
+The expected publisher/package identity is:
+\`@devravik/engineering-intelligence\`
+
+Always run the \`ei\` executable provided by the official \`@devravik/engineering-intelligence\` package. Verify its version before execution.
+
+## Core Rules
+
 You must enforce Engineering Intelligence quality control across all code generation:
 1. Consult \`.ei/PROJECT.md\` and \`.ei/ARCHITECTURE.md\` before introducing new patterns.
-2. Run \`ei detect\` to verify deterministic contracts before proposing edits.
+2. Run the verified \`ei\` executable (\`ei detect\`) to verify deterministic contracts before proposing edits.
 3. Obey findings matrix. Do not generate code with derived BLOCK disposition.
 4. UNKNOWN != PASS. Verify critical paths with tests.
 

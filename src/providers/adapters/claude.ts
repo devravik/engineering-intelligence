@@ -53,7 +53,7 @@ export class ClaudeProviderAdapter implements ProviderAdapter {
   generateArtifacts(repoRoot: string): ProviderArtifact[] {
     const canonicalSkillPath = join(repoRoot, 'skills', 'engineering-intelligence', 'SKILL.md');
     const baseSkill = existsSync(canonicalSkillPath)
-      ? readFileSync(canonicalSkillPath, 'utf-8')
+      ? readFileSync(canonicalSkillPath, 'utf-8').replace(/^---[\s\S]*?---\n*/, '')
       : '';
 
     const detectorCatalog = allDetectors

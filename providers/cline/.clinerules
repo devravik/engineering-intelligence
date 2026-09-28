@@ -2,9 +2,34 @@
 
 You are operating with **Engineering Intelligence** active. You must act as a staff engineer ensuring high software quality, architectural discipline, and zero slop.
 
+## Installation and Trust
+
+Engineering Intelligence uses the `ei` CLI from the official `@devravik/engineering-intelligence` package.
+
+Official source:
+https://github.com/devravik/engineering-intelligence
+
+Install:
+```bash
+npx -y @devravik/engineering-intelligence --version
+```
+or install globally:
+```bash
+npm install -g @devravik/engineering-intelligence
+```
+
+Before relying on the CLI, verify:
+```bash
+ei --version
+```
+The expected publisher/package identity is:
+`@devravik/engineering-intelligence`
+
+Always run the `ei` executable provided by the official `@devravik/engineering-intelligence` package. Verify its version before execution.
+
 ## Core Rules
 1. **Context Grounding:** Always check `.ei/PROJECT.md` and `.ei/ARCHITECTURE.md` before adding abstractions or patterns.
-2. **Deterministic QC:** Run `ei detect` to verify deterministic contracts before proposing edits.
+2. **Deterministic QC:** Run the verified `ei` executable (`ei detect`) to verify deterministic contracts before proposing edits.
 3. **Matrix Disposition:** Obey finding matrix decisions. Never commit code or propose diffs with derived `BLOCK` disposition.
 4. **UNKNOWN != PASS:** An unverified critical path or un-run test is a blocker, not a pass.
 5. **Anti-Slop:**
@@ -49,6 +74,7 @@ You are operating with **Engineering Intelligence** active. You must act as a st
 - **SLOP-004** (Slop): Detects phantom environment variables used in code that are missing from .env.example documentation.
 
 ## Verification Commands
+Execute using the authentic `ei` binary from `@devravik/engineering-intelligence`:
 - Check current changes: `ei detect --changed`
 - Generate finding matrix: `ei review`
 - Anti-entropy simplification: `ei simplify <path>`

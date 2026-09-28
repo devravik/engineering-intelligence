@@ -3,12 +3,36 @@ name: engineering-intelligence
 description: Engineering quality control for AI coding agents (detect, attribute, prioritize, repair, verify). Enforces deterministic contracts, baseline attribution, and finding matrices.
 ---
 
-# Engineering Intelligence (EI)
+# Engineering Intelligence Active Rule
 
-Engineering Intelligence provides **engineering quality control for AI coding agents**.
+## Installation and Trust
 
-Rather than relying on unbounded prompt prose or intuition, EI operates on a firm foundation:
-**Deterministic evidence + Project context + LLM reasoning + Baseline attribution + Regression tests.**
+Engineering Intelligence uses the `ei` CLI from the official `@devravik/engineering-intelligence` package.
+
+Official source:
+https://github.com/devravik/engineering-intelligence
+
+Install:
+```bash
+npx -y @devravik/engineering-intelligence --version
+```
+or install globally:
+```bash
+npm install -g @devravik/engineering-intelligence
+```
+
+Before relying on the CLI, verify:
+```bash
+ei --version
+```
+The expected publisher/package identity is:
+`@devravik/engineering-intelligence`
+
+Before execution, verify the binary:
+1. Locate `ei` using `which ei` (or `where ei` on Windows).
+2. Verify provenance with `ei --version`. The output must declare `@devravik/engineering-intelligence` or the `ei <version>` release.
+3. If `ei` cannot be established as the authentic Engineering Intelligence CLI, stop and prompt the user to install `@devravik/engineering-intelligence` (or execute via `npx -y @devravik/engineering-intelligence <command>`).
+4. Always run the `ei` executable provided by the official `@devravik/engineering-intelligence` package. Verify its version before execution.
 
 ---
 
@@ -21,6 +45,8 @@ When modifying, reviewing, or verifying code:
    └── Read .ei/PROJECT.md and .ei/ARCHITECTURE.md. Honor established boundaries.
 
 2. Deterministic Detection
+   └── Run the `ei` executable provided by the official `@devravik/engineering-intelligence` package.
+       Verify its version before execution.
    └── Execute `ei detect --changed` (or `ei detect <target>`).
    └── Obtain exact, machine-verified findings with evidence hashes.
 
@@ -37,26 +63,27 @@ When modifying, reviewing, or verifying code:
 
 5. Actionable Simplification & Repair
    └── Eliminate single-use abstractions, pass-through factories, and echo comments.
-   └── Re-run `ei detect` to verify behavioral invariance and clean disposition.
+   └── Re-run verified `ei detect` to verify behavioral invariance and clean disposition.
 ```
 
 ---
 
 ## Command Routing
 
-When the user invokes slash commands or asks for quality control, route directly to the local CLI and reference manuals:
+When the user invokes slash commands or asks for quality control, run the verified `ei` executable provided by the official `@devravik/engineering-intelligence` package (verify its version before execution):
 
-* `/review` (or `ei review`): Generates the structured discipline finding matrix and derived disposition. (See [commands/review.md](../../commands/review.md))
-* `/simplify` (or `ei simplify`): Executes the 8-step anti-entropy simplification loop. (See [commands/simplify.md](../../commands/simplify.md))
-* `/impact` (or `ei impact <symbol>`): Traverses call graphs and generates the change risk dependency graph. (See [commands/impact.md](../../commands/impact.md))
-* `/ship` (or `ei ship`): Enforces the 10-point production readiness release gate. (See [commands/ship.md](../../commands/ship.md))
-* `/ui` (or `ei ui [surface]`): UI Intelligence Engine — runs rendered-interface inspection, 5-pass critique, anti-slop distillation, and multi-viewport verification. (See [docs/commands/ui.md](../../docs/commands/ui.md))
+* `/review` (or `ei review`): Generates the structured discipline finding matrix and derived disposition.
+* `/simplify` (or `ei simplify`): Executes the 8-step anti-entropy simplification loop.
+* `/impact` (or `ei impact <symbol>`): Traverses call graphs and generates the change risk dependency graph.
+* `/ship` (or `ei ship`): Enforces the 10-point production readiness release gate.
+* `/ui` (or `ei ui [surface]`): UI Intelligence Engine — runs rendered-interface inspection, 5-pass critique, anti-slop distillation, and multi-viewport verification.
 
 ---
 
-## Core Invariants
+## Core Rules
 
-1. **Evidence Before Judgment:** A finding requires physical evidence (file, line, code snippet, evidence hash).
-2. **UNKNOWN != PASS:** An unverified critical path or un-run test is a blocker, not a pass.
-3. **No Unjustified Waivers:** Waivers in `.ei/ignores.json` or inline comments require an explicit `--reason`.
-4. **Behavior Belongs in Tests:** Behavioral contracts live in the regression test suite (`npm test`), not endlessly growing instruction files.
+Apply strict senior engineering quality control to all actions:
+1. Always ground decisions in `.ei/PROJECT.md` and `.ei/ARCHITECTURE.md`.
+2. Do not introduce single-implementation interfaces (ARCH-001) or pass-through factories (SLOP-001).
+3. Do not swallow exceptions in empty catch blocks (API-002).
+4. UNKNOWN != PASS. Verify claims with tests or concrete tool evidence.

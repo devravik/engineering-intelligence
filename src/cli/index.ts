@@ -38,7 +38,7 @@ async function main() {
       const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
       console.log(`@devravik/engineering-intelligence v${pkg.version}`);
     } catch {
-      console.log('@devravik/engineering-intelligence v0.1.2');
+      console.log('@devravik/engineering-intelligence v0.1.3');
     }
     return;
   }
