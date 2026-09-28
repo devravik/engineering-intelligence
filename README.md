@@ -135,6 +135,24 @@ Don't audit generic code. Catch the specific failure modes AI coding agents intr
 
 ---
 
+## Use Cases & Discovery
+
+Detailed guides for specific problem domains and agent environments:
+
+| Guide | Description |
+|---|---|
+| [AI-Generated Code Review](docs/use-cases/ai-code-review.md) | Full overview of what Engineering Intelligence detects and how it works |
+| [AI-Generated Code: Risks & Patterns](docs/use-cases/ai-generated-code.md) | The systematic failure modes of AI-generated code in production |
+| [AI-Agent Security Review](docs/use-cases/ai-agent-security.md) | Missing auth, SQL injection, command injection, secret leakage |
+| [AI-Agent Database Review](docs/use-cases/ai-agent-database-review.md) | N+1 queries, unindexed FKs, destructive migrations, unbounded scans |
+| [AI-Agent Architecture Review](docs/use-cases/ai-agent-architecture-review.md) | Single-use abstractions, God files, circular dependencies, singletons |
+| [AI-Generated UI Review](docs/use-cases/ai-generated-ui.md) | Purple gradients, card-in-card nesting, centering, a11y failures |
+| [Claude Code Quality](docs/use-cases/claude-code-quality.md) | Engineering gate for Claude Code sessions and PostToolUse hooks |
+| [Cursor Code Quality](docs/use-cases/cursor-code-quality.md) | Cursor Composer review and `.cursor/rules/` integration |
+| [Codex & Copilot Quality](docs/use-cases/codex-code-quality.md) | GitHub Actions CI gate and `copilot-instructions.md` setup |
+
+---
+
 ## Built for Every Major Agent Ecosystem
 
 Install once with `npx skills add devravik/engineering-intelligence`:
