@@ -1,128 +1,169 @@
 # Engineering Intelligence
 
-**Engineering quality control for AI coding agents.**
+### Catch the problems AI coding agents introduce before they reach production.
 
-Detect problems. Understand impact. Simplify changes. Verify the result.
+**AI writes code faster. Engineering Intelligence checks whether it should ship.**
 
-**1 canonical skill · 18 commands · 81 deterministic detectors · live browser verification · dynamic baseline attribution**
+AI can write working code that is still bad engineering. It looks correct, passes syntax checks, and silently degrades your system:
+- 4-layer class indirection for a single database query (**ARCH-001**).
+- Circular dependency cycles between domain services (**ARCH-003**).
+- Mutating API endpoints with missing authorization guards (**API-001**).
+- N+1 query loops inside serialization maps (**DB-002**).
+- Destructive migrations that lock production tables (**DB-003**).
+- Swallowed exceptions in empty catch blocks (**API-002**).
+- Outbound HTTP requests without timeouts (**API-005**).
+- AI purple/blue gradients and card-in-card visual slop (**UI-COLOR-001**, **UI-SLOP-003**).
+
+Engineering Intelligence gives coding agents a deterministic engineering quality gate for:
+**Architecture · Security · APIs · Databases · Testing · Complexity · UI Quality**
 
 [![skills.sh](https://skills.sh/b/devravik/engineering-intelligence)](https://skills.sh/devravik/engineering-intelligence)
 [![GitHub release](https://img.shields.io/github/v/release/devravik/engineering-intelligence)](https://github.com/devravik/engineering-intelligence/releases)
 [![License](https://img.shields.io/github/license/devravik/engineering-intelligence)](https://github.com/devravik/engineering-intelligence)
 [![npm](https://img.shields.io/npm/v/@devravik/engineering-intelligence)](https://www.npmjs.com/package/@devravik/engineering-intelligence)
 
-> **Quick start:** From your project root, run `npx @devravik/engineering-intelligence install`, then run `ei init` (or `/ei init`) inside your AI coding tool. Full docs: [GitHub](https://github.com/devravik/engineering-intelligence).
+---
+
+## Quick Start
+
+Install into any agent via the **[skills.sh](https://skills.sh/devravik/engineering-intelligence)** ecosystem (Claude Code, Cursor, Windsurf, Cline):
+```bash
+npx skills add devravik/engineering-intelligence
+```
+
+Or install via the official npm installer:
+```bash
+npx @devravik/engineering-intelligence install
+```
+
+Then run against your branch:
+```bash
+ei detect --changed
+ei review
+ei ship
+```
+
+**81 deterministic detectors** (32 code + 49 UI). Runs locally with zero LLM API cost and zero token latency.
 
 ---
 
-## Why Engineering Intelligence?
+## Run One Command Against Your AI-Generated Changes
 
-Modern AI coding agents generate an immense volume of code very quickly. That introduces a critical failure mode:
+Don't wait for code review to discover what your AI generated. Run `ei detect --changed` directly against your branch:
 
-### AI can produce technically valid software that is still bad software. It looks correct.
+```bash
+$ ei detect --changed
 
-Large Language Models will cheerfully generate:
-- 4-layer class indirection for a single database query (**ARCH-001**).
-- Circular dependency cycles between domain services (**ARCH-003**).
-- Pass-through Abstract Factories for singletons (**SLOP-001**).
-- Tautological echo comments that verbatim restate the code (**SLOP-002**).
-- Destructive migrations that lock production tables (**DB-003**).
-- Mutating API endpoints with missing authorization guards (**API-001**).
-- N+1 query loops inside serialization maps (**DB-002**).
-- AI purple/blue gradients and card-in-card visual slop (**UI-COLOR-001**, **UI-SLOP-003**).
+Engineering Intelligence · Active Branch Inspection
 
-Prompts alone cannot prevent this. Engineering Intelligence adds:
-- **One setup flow.** `ei init` records durable project truth in `.ei/` (`PROJECT.md`, `ARCHITECTURE.md`, `CONVENTIONS.md`, `DESIGN.md`, `constraints.md`), so agents understand architecture without hallucinating boundaries.
-- **18 commands.** A shared engineering vocabulary with your AI: `detect`, `review`, `simplify`, `impact`, `ship`, `doctor`, `ui critique`, `ui audit`, `ui distill`, and more.
-- **81 deterministic detector rules** (32 code + 49 UI). Runs locally with zero LLM API costs and zero token latency.
-- **Dynamic Git merge-base attribution.** Distinguishes legacy debt from regressions in new changes (`BASELINE` vs `NEW`).
-- **Staff-level release verification.** Mechanical dispositions (`BLOCK`, `FIX`, `REVIEW`, `SHIP`) enforcing `UNKNOWN != PASS`.
+NEW  DB-002   N+1 query loop inside array iteration
+     src/api/users.ts:84
+     const invoice = await db.invoices.findFirst({ where: { userId: u.id } });
+
+NEW  API-001  Mutating endpoint missing authorization guard
+     src/routes/projects.ts:42
+     export async function POST(req: Request) { ... }
+
+NEW  ARCH-001 Single-implementation interface adds speculative indirection
+     src/services/UserService.ts:1
+     export interface IUserService { ... }
+
+NEW  API-005  Outbound HTTP request executed without timeout or AbortSignal
+     src/services/github.ts:72
+     const res = await fetch("https://api.github.com/repos/...");
+
+4 findings (4 NEW, 0 BASELINE)
+```
+
+Then evaluate the machine-derived review disposition:
+
+```bash
+$ ei review
+
+══════════════════════════════════════════════════════════════
+  ENGINEERING INTELLIGENCE · FINDING MATRIX REVIEW
+══════════════════════════════════════════════════════════════
+
+  CRITICAL  API-001  Missing authorization guard
+  HIGH      DB-002   N+1 query in iteration loop
+  HIGH      API-005  Unbounded HTTP request lacking timeout
+  MEDIUM    ARCH-001 Single-implementation interface
+
+  DERIVED DISPOSITION: BLOCK
+  2 security issues · 1 database issue · 1 architecture issue
+```
+
+And enforce the pre-merge ship gate:
+
+```bash
+$ ei ship
+
+══════════════════════════════════════════════════════════════
+  ENGINEERING INTELLIGENCE · PRODUCTION READINESS GATE
+══════════════════════════════════════════════════════════════
+
+  [✗] Zero Blocker Findings (1 Blocker: API-001)
+  [✗] Zero Fix-Required Findings (2 Fixes: DB-002, API-005)
+  [✓] Behavioral Invariance (120 tests passed)
+  [✓] Architectural Boundaries Honored
+  [✗] UNKNOWN != PASS (1 unverified endpoint mutation)
+
+  TERMINAL DISPOSITION: BLOCK
+  Release blocked until blockers and unverified paths are resolved.
+```
 
 ---
 
-## What's Included
+## 81 Problems AI Coding Agents Introduce
 
-### The Skill: engineering-intelligence
+Don't audit generic code. Catch the specific failure modes AI coding agents introduce:
 
-The skill installs as a native command across supported AI coding tools:
+| What your AI generates | Why it breaks production | Detector Rule |
+| :--- | :--- | :--- |
+| **N+1 query loops** | Loops executing queries inside iteration instead of batching | [`DB-002`](docs/problems.md#1-database--orm-failures) |
+| **Missing authorization checks** | Mutating API endpoints or server actions missing auth guards | [`API-001`](docs/problems.md#2-security--perimeter-vulnerabilities) |
+| **Single-use interfaces & factories** | Speculative abstractions with exactly one implementation | [`ARCH-001`](docs/problems.md#3-architectural-decay--over-engineering), [`SLOP-001`](docs/problems.md#3-architectural-decay--over-engineering) |
+| **Table-locking migrations** | Adding `NOT NULL` columns to existing tables without `DEFAULT` | [`DB-003`](docs/problems.md#1-database--orm-failures) |
+| **Unbounded HTTP requests** | External `fetch()` calls without timeouts or AbortSignals | [`API-005`](docs/problems.md#4-code-quality--error-handling) |
+| **AI purple/blue gradient UI slop** | Formulaic purple-to-indigo aesthetics & card-in-card nesting | [`UI-COLOR-001`](docs/problems.md#6-frontend--ai-ui-slop), [`UI-SLOP-003`](docs/problems.md#6-frontend--ai-ui-slop) |
+| **Swallowed exceptions** | Empty `catch` blocks that discard stack traces and hide crashes | [`API-002`](docs/problems.md#4-code-quality--error-handling) |
+| **Tautological echo comments** | Verbatim restating code lines without architectural rationale | [`SLOP-002`](docs/problems.md#4-code-quality--error-handling) |
+| **Skipped & fake test assertions** | Writing `expect(true).toBe(true)` or committing `.skip` | [`TEST-002`](docs/problems.md#5-testing-anti-patterns), [`TEST-004`](docs/problems.md#5-testing-anti-patterns) |
+| **Circular dependency cycles** | Direct cyclic imports between domain modules | [`ARCH-003`](docs/problems.md#3-architectural-decay--over-engineering) |
 
-```bash
-/ei <command> <target>
-# or in terminal:
-ei <command> <target>
-```
+👉 **[See all 81 detector rules and failure patterns →](docs/problems.md)**
 
-Start every new project with:
+---
 
-```bash
-ei init
-# or `/ei init` in your agent chat
-```
+## Built for Every Major Agent Ecosystem
 
-`init` inspects the project, discovers the active tech stack, and initializes the durable `.ei/` context suite:
+Install once with `npx skills add devravik/engineering-intelligence`:
+
+* **[Claude Code](docs/ecosystems/claude-code.md)**: Native slash command `/ei`, Claude Code marketplace plugin, progressive skill disclosure.
+* **[Cursor](docs/ecosystems/cursor.md)**: `.cursor/rules/` (`.mdc`), Composer boundary guards, MCP server integration.
+* **[GitHub Copilot & Codex](docs/ecosystems/codex.md)**: `.github/copilot-instructions.md`, CLI verification loop.
+* **[OpenCode](docs/ecosystems/opencode.md)**: Open-source terminal agent skill, plugin manifests.
+* **[Google Antigravity (AGY)](docs/ecosystems/antigravity.md)**: Automated lifecycle hooks on tool edits (`PostToolUse`) and turn completion (`Stop`).
+* **[Windsurf & Devin Desktop](docs/ecosystems/windsurf.md)**: `.windsurfrules` persistent directives for Cascade agent flows.
+* **[Cline](docs/ecosystems/cline.md)**: VS Code autonomous agent rules (`.clinerules`) and verification.
+
+---
+
+## The Staff Engineer Cognition Cycle
+
+Engineering Intelligence operates on a strict seven-stage cognition sequence:
 
 ```text
-.ei/
-├── PROJECT.md          # Mission, core domains, and detected stack baseline
-├── ARCHITECTURE.md     # Layering rules, dependency boundaries, invariants
-├── CONVENTIONS.md      # Coding style, error handling, validation idioms
-├── DESIGN.md           # Visual design system tokens, typography, surfaces
-├── DECISIONS.md        # Architecture Decision Records (ADRs)
-├── constraints.md      # Invariants, performance budgets, forbidden deps
-├── ignores.json        # Scoped waivers with mandatory justification
-└── state/
-    ├── baseline.json   # Known legacy baseline snapshot
-    └── sessions/       # Ephemeral session inspection runs
+DETECT ──► ATTRIBUTE ──► UNDERSTAND ──► REASON ──► DECIDE ──► REPAIR ──► VERIFY
 ```
 
-### Commands
-
-All commands are accessible directly via the CLI or through your agent's native `/ei` slash interface:
-
-| Command | What it does |
-| :--- | :--- |
-| `ei init` | One-time setup: inspect stack, record project memory, write `.ei/` context suite |
-| `ei detect` | Run deterministic rules on changed files (`--changed`) or entire workspace |
-| `ei review` | Evaluate findings matrix, reconcile baseline attribution, derive disposition |
-| `ei simplify` | 8-step anti-entropy simplification loop: eliminate dead code, collapse indirection |
-| `ei impact <symbol>` | Blast radius & dependency graph traversal: trace callers, risks, dependents |
-| `ei ship` | Pre-merge release gate: verifies 10 production checks, enforces `UNKNOWN != PASS` |
-| `ei baseline` | Snapshot or display known legacy technical debt without penalizing new PRs |
-| `ei ignores` | Manage scoped waivers and rule suppressions with mandatory rationale |
-| `ei doctor` | Audit installed harnesses, capabilities, detectors, hooks, and marketplace parity |
-| `ei install` | Auto-detect AI agent harnesses and provision native skills, hooks, and rules |
-| `ei update` | Re-synchronize installed provider configurations and skills from canonical core |
-| `ei ui detect` | Deterministic frontend rules: typography, color, spacing, composition, slop |
-| `ei ui audit` | Technical UI audit: accessibility (WCAG AA), responsive matrix, tokens |
-| `ei ui critique` | Two-pass critique: mechanical compliance + visual/UX heuristic reasoning |
-| `ei ui distill` | Anti-slop distillation: remove unnecessary wrappers, cards, and decoration |
-| `ei ui document` | Reverse-engineer existing styles into a clean, canonical `DESIGN.md` |
-| `ei mcp` | Start stdio Model Context Protocol (MCP) & Agent Client Protocol (ACP) server |
-| `ei providers` | Inspect all 16 supported coding agents, environments, and priority tiers |
-| `ei sync-providers` | Synchronize provider artifacts across P0-P3 tiers from canonical core |
-
-#### Usage Examples
-
-```bash
-ei detect --changed           # Check changed files in active Git branch
-ei review                     # Review changes with machine-derived disposition
-ei simplify src/services/     # Strip pass-through wrappers and singletons
-ei impact UserModel           # Check blast radius before refactoring
-ei ship                       # Run release gate verification before merging
-ei ui critique src/components # Run 5-pass UI & accessibility critique
-```
-
-### Anti-Patterns & Slop Doctrine
-
-Engineering Intelligence enforces explicit constraints against common AI-generated antipatterns:
-
-- **No speculative indirection:** Don't create single-implementation interfaces or factories (`ARCH-001`, `SLOP-001`).
-- **No echo comments:** Don't write comments that simply restate the line of code (`SLOP-002`).
-- **No unhandled exceptions:** Don't swallow errors in empty catch blocks or destroy stack traces (`API-002`).
-- **No N+1 queries:** Don't execute database queries inside map/filter/loops (`DB-002`).
-- **No unindexed foreign keys:** Don't define relational keys without index backing (`DB-001`).
-- **No unconstrained HTTP:** Don't make external network calls without timeouts or AbortSignals (`API-005`).
-- **No generic AI aesthetics:** Don't use purple-to-blue gradients, card-in-card nesting, or low-contrast text (`UI-COLOR-001`, `UI-SLOP-003`).
+1. **DETECT**: Run 81 deterministic rules to gather physical evidence (file, line, snippet, hash).
+2. **ATTRIBUTE**: Reconcile dynamic Git merge-base to separate legacy codebase debt (`BASELINE`) from newly introduced debt (`NEW`). Never blame the agent for existing debt.
+3. **UNDERSTAND**: Consult durable project memory (`.ei/PROJECT.md`, `.ei/ARCHITECTURE.md`) before changing code.
+4. **REASON**: Evaluate evidence against architectural contracts and risk matrices.
+5. **DECIDE**: Mechanically derive terminal disposition (`BLOCK`, `FIX`, `REVIEW`, `SHIP`). Enforce `UNKNOWN != PASS`.
+6. **REPAIR**: Eliminate dead abstractions, collapse pass-through wrappers, add missing guards.
+7. **VERIFY**: Re-run test suites (`npm test`) and `ei detect` to prove behavioral invariance.
 
 ---
 
